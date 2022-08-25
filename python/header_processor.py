@@ -15,13 +15,21 @@ def get_additional_compiler_flags(libraries, remove_sanitize=True):
 def get_include_dirs(flags):
     return [ str.strip("-I") for str in flags if "-I" in str ]
 
-def read_header_file(path, include_dirs=["."]):
+def read_header_file(path, include_dirs=[]):
     content = ""
+    include_dirs.insert(0, ".") # search first in current directory
     with open(path) as header:
+        #with open(path) as buf:
+        #    print(20*'*'+'\n'+buf.read()+'\n'+20*'*')
         for line in header:
+            #print("debug: {line}".format(line=line.strip('\n')))
             is_include_line, filename = is_include(line)
             if is_include_line:
-                print("TODO include {file}".format(file=filename))
+                for directory in include_dirs:
+                    path = os.path.join(directory, filename)
+                    if os.path.exists(path):
+                        content += read_header_file(path)
+                        break;
                 continue
             if is_compiler_directive(line):
                 continue
@@ -45,7 +53,7 @@ def is_include(line):
     return False, ""
 
 if __name__ == "__main__":
-    file = "../include/julea-kv.h"
-    #file = "tester.h"
-    content = read_header_file(file)
-    print(20*'*'+2*'\n'+"content is"+2*'\n'+content)
+    includes = get_additional_compiler_flags(["glib-2.0", "julea", "julea-object", "julea-kv", "julea-db"])
+    dirs = get_include_dirs(includes)
+    content = read_header_file("/Users/niklas/src/julea/include/julea-kv.h", dirs)
+    print(content)
