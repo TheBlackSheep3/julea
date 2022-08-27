@@ -33,7 +33,7 @@ def read_header_file(path, include_dirs=[]):
                 continue
             if is_compiler_directive(line):
                 continue
-            content += line
+            content += line.replace("const", "")
         return content
 
 def is_compiler_directive(line):
@@ -55,5 +55,6 @@ def is_include(line):
 if __name__ == "__main__":
     includes = get_additional_compiler_flags(["glib-2.0", "julea", "julea-object", "julea-kv", "julea-db"])
     dirs = get_include_dirs(includes)
-    content = read_header_file("/Users/niklas/src/julea/include/julea-kv.h", dirs)
-    print(content)
+    print(dirs)
+    content = read_header_file("/home/urz/diessner/julea/include/julea-kv.h", dirs)
+    #print(content)
