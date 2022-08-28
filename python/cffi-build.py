@@ -22,9 +22,9 @@ ffi = cffi.FFI()
 #    ffi.cdef(header_content)
 includes = hp.get_additional_compiler_flags(["glib-2.0", "julea", "julea-object", "julea-kv", "julea-db"])
 dirs = hp.get_include_dirs(includes)
-header_content = hp.read_header_file("/home/user/julea/include/julea-kv.h", dirs)
-with open("out.h", "w") as file:
-    file.write(header_content)
+header_content = hp.read_header_file("/home/user/julea/include/julea-kv.h", dirs, debug=False)
+#with open("out.h", "w") as file:
+#    file.write(header_content)
 ffi.cdef(header_content)
 ffi.set_source(
         "julea_kv",

@@ -15,25 +15,32 @@ def get_additional_compiler_flags(libraries, remove_sanitize=True):
 def get_include_dirs(flags):
     return [ str.strip("-I") for str in flags if "-I" in str ]
 
-def read_header_file(path, include_dirs=[]):
+def read_header_file(path, include_dirs=[], debug=False):
     content = ""
     include_dirs.insert(0, ".") # search first in current directory
+    #if debug:
+    #    debug_print(' '.join(include_dirs))
     with open(path) as header:
-        #with open(path) as buf:
-        #    print(20*'*'+'\n'+buf.read()+'\n'+20*'*')
         for line in header:
-            #print("debug: {line}".format(line=line.strip('\n')))
+            #if debug:
+            #    debug_print(line.strip('\n'))
             is_include_line, filename = is_include(line)
             if is_include_line:
+                #if debug:
+                #    debug_print("is include line")
                 for directory in include_dirs:
                     path = os.path.join(directory, filename)
                     if os.path.exists(path):
-                        content += read_header_file(path)
+                        #if debug:
+                        #    debug_print("found file {file}".format(file=path))
+                        content += read_header_file(path, include_dirs, debug)
                         break;
                 continue
             if is_compiler_directive(line):
+                #if debug:
+                #    debug_print("is compiler directive")
                 continue
-            content += line.replace("const", "")
+            content += line
         return content
 
 def is_compiler_directive(line):
@@ -51,6 +58,9 @@ def is_include(line):
         return True, filename
     # this should never need to be called
     return False, ""
+
+def debug_print(output):
+    print("debug: {line}".format(line=output))
 
 if __name__ == "__main__":
     includes = get_additional_compiler_flags(["glib-2.0", "julea", "julea-object", "julea-kv", "julea-db"])
