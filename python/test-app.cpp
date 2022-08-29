@@ -1,10 +1,11 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include <vector>
+#include <string>
+#include <iostream>
 #include "header_processor.hpp"
 
 int main()
 {
-	const char* flags[] = {
+	std::vector<std::string> flags = {
 		"-I/home/urz/diessner/julea/dependencies/opt/spack/linux-centos8-zen3/gcc-11.2.0/glib-2.72.1-l5vgngsq6g4fyb36ty2kv7rmgvl5cy6m/include/glib-2.0",
 		"-I/home/urz/diessner/julea/dependencies/opt/spack/linux-centos8-zen3/gcc-11.2.0/glib-2.72.1-l5vgngsq6g4fyb36ty2kv7rmgvl5cy6m/lib/glib-2.0/include",
 		"-I/home/urz/diessner/julea/dependencies/opt/spack/linux-centos8-zen3/gcc-11.2.0/pcre-8.45-yhkorzhmm3c5kqrpgzvad3ktxx5et6t3/include",
@@ -24,15 +25,14 @@ int main()
 		"-fsanitize=address,undefined",
 		"-pthread"
 	};
-	int flags_length = 18;
-	char** include_dirs = (char**)malloc(flags_length*sizeof(char**));
-	int include_dirs_length = 0;
 
-	if (get_include_dirs(include_dirs, &include_dirs_length, flags, flags_length) == 0)
+	std::vector<std::string> include_dirs = get_include_dirs(flags);
+	int size = include_dirs.size();
+	if (size > 0)
 	{
-		for (int i = 0; i < include_dirs_length; ++i)
+		for (int i = 0; i < size; ++i)
 		{
-			printf("%s\n", include_dirs[i]);
+			std::cout << include_dirs[i] << std::endl;
 		}
 	}
 	else

@@ -1,6 +1,5 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#include <vector>
+#include <string>
 #include "header_processor.hpp"
 
 //int read_header_file(char* content, char const* path, char const* const* include_dirs, bool debug)
@@ -20,18 +19,16 @@
 //	return 0;
 //}
 
-int get_include_dirs(char** include_dirs, int* include_dirs_length_ptr, char const* const* flags, int flags_length)
+std::vector<std::string> get_include_dirs(std::vector<std::string> flags)
 {
-	int added_item_count = 0;
+	int flags_length = flags.size();
+	auto includes = std::vector<std::string>();
 	for (int i = 0; i < flags_length; ++i)
 	{
-		if (strncmp("-I", flags[i], 2) == 0) // compare first 2 characters
+		if (flags[i].compare(0, 2, "-I") == 0) // starts with "-I"
 		{
-			include_dirs[added_item_count] = (char*)malloc(sizeof(char)*strlen(flags[i])-1); // +1 for null character and -2 for missing "-I"
-			strcpy(include_dirs[added_item_count], flags[i]+2);
-			++added_item_count;
+			includes.push_back(flags[i].substr(2));
 		}
 	}
-	*include_dirs_length_ptr = added_item_count;
-	return 0;
+	return includes;
 }
