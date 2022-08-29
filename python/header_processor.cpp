@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "header_processor.h"
+#include "header_processor.hpp"
 
 //int read_header_file(char* content, char const* path, char const* const* include_dirs, bool debug)
 //{
