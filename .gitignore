@@ -25,3 +25,6 @@ bld*/
 
 # Python
 */__pycache__/
+
+# C/C++ LSP
+.ccls-cache/
