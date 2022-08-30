@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=-Wall -Werror -Wextra
+CFLAGS=-Wall -Werror -Wextra -std=c++11
 LIBNAME=header_processor
 APPNAME=test-app
 
