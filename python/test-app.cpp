@@ -40,18 +40,21 @@ int main()
 	//	printf("something went wrong");
 	//}
 
-	std::vector<std::string> libs = {
-		"glib-2.0",
-		"julea",
-		"julea-object",
-		"julea-kv",
-		"julea-db"
-	};
-	auto flags = get_additional_compiler_flags(libs);
-	for (auto flag : flags)
-	{
-		std::cout << flag << std::endl;
-	}
+	//std::vector<std::string> libs = {
+	//	"glib-2.0",
+	//	"julea",
+	//	"julea-object",
+	//	"julea-kv",
+	//	"julea-db"
+	//};
+	//auto flags = get_additional_compiler_flags(libs);
+	//for (auto flag : flags)
+	//{
+	//	std::cout << flag << std::endl;
+	//}
+	
+	is_include("#include \"header_processor.h\"");
+	is_include("#include <vector.h>");
 
 	return 0;
 }

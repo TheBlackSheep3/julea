@@ -1,30 +1,15 @@
 #include <vector>
 #include <string>
-#include "header_processor.hpp"
-
-//int read_header_file(char* content, char const* path, char const* const* include_dirs, bool debug)
-//{
-//	FILE* file_pointer = fopen(path, "r");
-//	if (file_pointer == NULL)
-//	{
-//
-//	}
-//	fclose(file_pointer);
-//	return 0;
-//}
-//
-//
-//int get_additional_compiler_flags(char* flags, char const* const* libraries, bool remove_sanitize)
-//{
-//	return 0;
-//}
-
 #include <cstdio>
 #include <iostream>
 #include <memory>
 #include <stdexcept>
 #include <array>
 #include <set>
+#include <fstream>
+#include <regex>
+#include <tuple>
+#include "header_processor.hpp"
 
 std::string exec(const char* cmd) {
     std::array<char, 128> buffer;
@@ -82,3 +67,45 @@ std::vector<std::string> get_include_dirs(std::vector<std::string> flags)
 	}
 	return includes;
 }
+
+std::tuple<bool, std::string> is_include(std::string line)
+{
+	std::regex regex("#include\\s+(<(([\\w-]+\\/)*[\\w-]+\\.h)>|\\\"(([\\w-]+\\/)*[\\w-]+\\.h)\\\")");
+	//std::regex regex("#include\\s+(.*)");
+	//std::regex regex("\"(.*\\.h)\"");
+	//std::regex regex(".\\.h");
+	std::match_results<std::string::const_iterator> match_result;
+
+	if (!std::regex_search(line, match_result, regex))
+	{
+		std::cout << "no match" << std::endl;
+	}
+
+	for (auto match : match_result)
+	{
+		std::cout << match << std::endl;
+	}
+	return { false, "" };
+}
+
+//std::string read_header_file(std::string file_path, std::vector<std::string> include_dirs, bool debug)
+//{
+//	std::string content = "";
+//	std::string line;
+//	std::ifstream header(file_path);
+//
+//	if(!header.is_open())
+//	{
+//		std::cerr << "failed to open file "
+//			<< file_path
+//			<< std::endl;
+//		return "";
+//	}
+//
+//	while(getline(header, line))
+//	{
+//		content += line;
+//	}
+//
+//	return content;
+//}
