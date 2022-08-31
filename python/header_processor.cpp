@@ -71,20 +71,25 @@ std::vector<std::string> get_include_dirs(std::vector<std::string> flags)
 std::tuple<bool, std::string> is_include(std::string line)
 {
 	std::regex regex("#include\\s+(<(([\\w-]+\\/)*[\\w-]+\\.h)>|\\\"(([\\w-]+\\/)*[\\w-]+\\.h)\\\")");
-	//std::regex regex("#include\\s+(.*)");
-	//std::regex regex("\"(.*\\.h)\"");
-	//std::regex regex(".\\.h");
 	std::match_results<std::string::const_iterator> match_result;
 
 	if (!std::regex_search(line, match_result, regex))
 	{
-		std::cout << "no match" << std::endl;
+		return { false, "" };
 	}
 
-	for (auto match : match_result)
+	std::string filename = match_result[2];
+	if (filename != "")
 	{
-		std::cout << match << std::endl;
+		return { true, filename };
 	}
+
+	filename = match_result[4];
+	if (filename != "")
+	{
+		return { true, filename };
+	}
+
 	return { false, "" };
 }
 
