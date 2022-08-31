@@ -98,6 +98,16 @@ bool is_compiler_directive(std::string line)
 	return line[0] == '#';
 }
 
+std::string path_combine(std::string dir, std::string file)
+{
+	std::string full_path = dir;
+	if (full_path.back() != '/')
+	{
+		full_path.push_back('/');
+	}
+	return full_path + file;
+}
+
 std::string read_header_file(std::string file_path, std::vector<std::string> include_dirs)
 {
 	std::string content = "";
@@ -117,11 +127,14 @@ std::string read_header_file(std::string file_path, std::vector<std::string> inc
 		auto tuple = is_include(line);
 		if (std::get<0>(tuple))
 		{
-			std::cout << "TODO include " << std::get<1>(tuple) << std::endl;
-			std::cout << "\tsearching in:" << std::endl;
 			for (auto dir : include_dirs)
 			{
-				std::cout << "\t\t" << dir << std::endl;
+				std::string file_content = read_header_file(path_combine(dir, std::get<1>(tuple)), include_dirs);
+				if (file_content != "")
+				{
+					content += file_content;
+					break;
+				}
 			}
 			continue;
 		}
