@@ -38,20 +38,17 @@ int main()
 	//	printf("something went wrong");
 	//}
 
-	//std::vector<std::string> libs = {
-	//	"glib-2.0",
-	//	"julea",
-	//	"julea-object",
-	//	"julea-kv",
-	//	"julea-db"
-	//};
-	//auto flags = get_additional_compiler_flags(libs);
-	//for (auto flag : flags)
-	//{
-	//	std::cout << flag << std::endl;
-	//}
-	
-	auto preprocessed = read_header_file("../include/julea-kv.h", { "." });
+	std::vector<std::string> libs = {
+		"glib-2.0",
+		"julea",
+		"julea-object",
+		"julea-kv",
+		"julea-db"
+	};
+	auto flags = get_additional_compiler_flags(libs);
+	auto dirs = get_include_dirs(flags);
+	dirs.push_back(".");
+	auto preprocessed = read_header_file("../include/julea-kv.h", dirs);
 
 	std::cout << preprocessed << std::endl;
 	return 0;

@@ -116,9 +116,6 @@ std::string read_header_file(std::string file_path, std::vector<std::string> inc
 
 	if(!header.is_open())
 	{
-		std::cerr << "failed to open file "
-			<< file_path
-			<< std::endl;
 		return "";
 	}
 
