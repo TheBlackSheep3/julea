@@ -93,7 +93,12 @@ std::tuple<bool, std::string> is_include(std::string line)
 	return { false, "" };
 }
 
-//std::string read_header_file(std::string file_path, std::vector<std::string> include_dirs, bool debug)
+bool is_compiler_directive(std::string line)
+{
+	return line[0] == '#';
+}
+
+//std::string read_header_file(std::string file_path, std::vector<std::string> include_dirs)
 //{
 //	std::string content = "";
 //	std::string line;

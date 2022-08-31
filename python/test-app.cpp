@@ -1,7 +1,4 @@
-#include <vector>
-#include <string>
 #include <iostream>
-#include <tuple>
 #include "header_processor.hpp"
 
 int main()
@@ -55,25 +52,9 @@ int main()
 	//}
 	
 	
-	auto value = is_include("#include \"header_processor.h\"");
-	if (std::get<0>(value))
-	{
-		std::cout << std::get<1>(value) << std::endl;
-	}
-	else
-	{
-		std::cout << "Parsing Error" << std::endl;
-	}
-
-	value = is_include("#include <vector.h>");
-	if (std::get<0>(value))
-	{
-		std::cout << std::get<1>(value) << std::endl;
-	}
-	else
-	{
-		std::cout << "Parsing Error" << std::endl;
-	}
+	std::cout << is_compiler_directive("#include \"header_processor.h\"") << std::endl;
+	std::cout << is_compiler_directive("Parsing Error") << std::endl;
+	std::cout << is_compiler_directive("#include <vector.h>") << std::endl;
 
 	return 0;
 }
