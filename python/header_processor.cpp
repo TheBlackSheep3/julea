@@ -98,24 +98,41 @@ bool is_compiler_directive(std::string line)
 	return line[0] == '#';
 }
 
-//std::string read_header_file(std::string file_path, std::vector<std::string> include_dirs)
-//{
-//	std::string content = "";
-//	std::string line;
-//	std::ifstream header(file_path);
-//
-//	if(!header.is_open())
-//	{
-//		std::cerr << "failed to open file "
-//			<< file_path
-//			<< std::endl;
-//		return "";
-//	}
-//
-//	while(getline(header, line))
-//	{
-//		content += line;
-//	}
-//
-//	return content;
-//}
+std::string read_header_file(std::string file_path, std::vector<std::string> include_dirs)
+{
+	std::string content = "";
+	std::string line;
+	std::ifstream header(file_path);
+
+	if(!header.is_open())
+	{
+		std::cerr << "failed to open file "
+			<< file_path
+			<< std::endl;
+		return "";
+	}
+
+	while(getline(header, line))
+	{
+		auto tuple = is_include(line);
+		if (std::get<0>(tuple))
+		{
+			std::cout << "TODO include " << std::get<1>(tuple) << std::endl;
+			std::cout << "\tsearching in:" << std::endl;
+			for (auto dir : include_dirs)
+			{
+				std::cout << "\t\t" << dir << std::endl;
+			}
+			continue;
+		}
+
+		if (is_compiler_directive(line))
+		{
+			continue;
+		}
+
+		content += line + "\n";
+	}
+
+	return content;
+}

@@ -51,10 +51,8 @@ int main()
 	//	std::cout << flag << std::endl;
 	//}
 	
-	
-	std::cout << is_compiler_directive("#include \"header_processor.h\"") << std::endl;
-	std::cout << is_compiler_directive("Parsing Error") << std::endl;
-	std::cout << is_compiler_directive("#include <vector.h>") << std::endl;
+	auto preprocessed = read_header_file("../include/julea-kv.h", { "." });
 
+	std::cout << preprocessed << std::endl;
 	return 0;
 }
