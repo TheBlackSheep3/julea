@@ -16,8 +16,20 @@ def get_include_dirs(flags):
     return [ str.strip("-I") for str in flags if "-I" in str ]
 
 def read_header_file(path, include_dirs=[], debug=False):
-    content = ""
     include_dirs.insert(0, ".") # search first in current directory
+    filename = get_filename_from_path(path)
+    included_files = [ filename ]
+    return read_header_file_internal(path, include_dirs, included_files, debug)
+
+def get_filename_from_path(path):
+    match_result = re.search(r"\/([\w-]+\/)*([\w-]+\.h)", path)
+    if match_result != None:
+        return match_result.group(2)
+    return ""
+
+
+def read_header_file_internal(path, include_dirs=[], included_files=[], debug=False):
+    content = ""
     #if debug:
     #    debug_print(' '.join(include_dirs))
     with open(path) as header:
@@ -28,9 +40,13 @@ def read_header_file(path, include_dirs=[], debug=False):
             if is_include_line:
                 #if debug:
                 #    debug_print("is include line")
+                shortened = get_filename_from_path(filename)
+                if shortened in included_files:
+                    continue
                 for directory in include_dirs:
                     path = os.path.join(directory, filename)
                     if os.path.exists(path):
+                        included_files.append(shortened)
                         #if debug:
                         #    debug_print("found file {file}".format(file=path))
                         content += read_header_file(path, include_dirs, debug)
