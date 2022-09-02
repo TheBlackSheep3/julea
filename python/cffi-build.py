@@ -1,30 +1,10 @@
 import cffi
 import os
-import header_processor as hp
 
-excluded_words = [ "" ]
 ffi = cffi.FFI()
-#with open(headerfile) as h_file:
-#    hellois_comment = False
-#    header_content = ""
-#    for line in h_file:
-#        if not is_comment and "/**" in line:
-#            is_comment = True
-#            continue
-#        if is_comment and "**/" not in line:
-#            continue
-#        if is_comment and "**/" in line:
-#            is_comment = False
-#            continue
-#        if any(directive in line for directive in excluded_words):
-#            continue
-#        header_content += line
-#    ffi.cdef(header_content)
-includes = hp.get_additional_compiler_flags(["glib-2.0", "julea", "julea-object", "julea-kv", "julea-db"])
-dirs = hp.get_include_dirs(includes)
-header_content = hp.read_header_file("/home/user/julea/include/julea-kv.h", dirs, debug=False)
-#with open("out.h", "w") as file:
-#    file.write(header_content)
+os.system("gcc -E -P /home/user/julea/include/julea-kv.h $(pkg-config --cflags glib-2.0 julea julea-object julea-kv julea-db) -o header.h")
+with open("header.h") as header:
+    header_content = header.readlines()
 ffi.cdef(header_content)
 ffi.set_source(
         "julea_kv",
