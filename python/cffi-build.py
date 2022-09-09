@@ -17,6 +17,7 @@ def prepare():
     header_content = header_content.replace("sizeof (unsigned long int)", "4")
     header_content = header_content.replace("(int) sizeof (__fd_mask)", "4")
     header_content = header_content.replace("sizeof (int)", "4")
+    header_content = header_content.replace("~(G_LOG_FLAG_RECURSION | G_LOG_FLAG_FATAL)", "-4")
     with open("header_strip.h", "w") as file:
         file.write(header_content)
 
