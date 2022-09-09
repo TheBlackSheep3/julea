@@ -14,6 +14,8 @@ def prepare():
                 continue
             header_content += line
     header_content = re.sub(r"static\s+(inline\s+)?(?P<signature>\w+\s+\w+\s+(\([\w\s,]*\)))\s*{[^{}]*({[^{}]*})*[^{}]*}", r"\g<signature>;", header_content)
+    header_content = header_content.replace("__val[(1024 / (8 * sizeof (unsigned long int)))]", "__val[32]")
+    header_content = header_content.replace("__fds_bits[1024 / (8 * (int) sizeof (__fd_mask))]", "__fds_bits[32]")
     with open("header_strip.h", "w") as file:
         file.write(header_content)
 
