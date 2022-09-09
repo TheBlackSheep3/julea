@@ -1,4 +1,5 @@
 import cffi
+import re
 import os
 import header_processor as hp
 
@@ -12,6 +13,7 @@ def prepare():
             if line.startswith("#pragma GCC diagnostic"):
                 continue
             header_content += line
+    header_content = re.sub(r"static\s+(inline\s+)?(?P<signature>\w+\s+\w+\s+(\([\w\s,]*\)))\s*{[^{}]*({[^{}]*})*[^{}]*}", r"\g<signature>;", header_content)
     with open("header_strip.h", "w") as file:
         file.write(header_content)
 
@@ -20,7 +22,7 @@ def test():
         header_content = file.read()
     includes = hp.get_additional_compiler_flags(["glib-2.0", "julea", "julea-object", "julea-kv", "julea-db"])
     include_dirs = hp.get_include_dirs(includes)
-    ffi.cdef(header_content)
+    ffi.cdef(header_content, override=True)
     ffi.set_source(
             "julea_kv",
             """
@@ -50,4 +52,5 @@ def alt():
     ffi.compile(verbose=True)
 
 if __name__ == "__main__":
+    prepare()
     test()
