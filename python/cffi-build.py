@@ -1,4 +1,5 @@
 import cffi
+from struct import calcsize
 import re
 import os
 import header_processor as hp
@@ -14,9 +15,9 @@ def prepare():
                 continue
             header_content += line
     header_content = re.sub(r"static\s+(inline\s+)?(?P<signature>\w+\s*\**\s*\s+\w+\s+(\([\w\s,*]*\)))\s*{[^{}]*({[^{}]*})*[^{}]*}", r"\g<signature>;", header_content)
-    header_content = header_content.replace("sizeof (unsigned long int)", "4")
-    header_content = header_content.replace("(int) sizeof (__fd_mask)", "4")
-    header_content = header_content.replace("sizeof (int)", "4")
+    header_content = header_content.replace("sizeof (unsigned long int)", str(calcsize('L')))
+    header_content = header_content.replace("(int) sizeof (__fd_mask)", str(calcsize('l')))
+    header_content = header_content.replace("sizeof (int)", str(calcsize('i')))
     header_content = header_content.replace("~(G_LOG_FLAG_RECURSION | G_LOG_FLAG_FATAL)", "-4")
     with open("header_strip.h", "w") as file:
         file.write(header_content)
