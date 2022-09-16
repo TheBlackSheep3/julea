@@ -6,7 +6,23 @@ import header_processor as hp
 
 ffi = cffi.FFI()
 
-def prepare():
+def collect_julea(filename, debug = False):
+    includes = hp.get_additional_compiler_flags(["julea", "julea-object", "julea-kv", "julea-db"])
+    dirs = hp.get_include_dirs(includes)
+    output = hp.read_header_file("/home/user/julea/include/julea-kv.h", list(filter(lambda entry: not "dependencies" in entry,dirs)), debug)
+    print("got file content")
+    content = ""
+    for line in output.split('\n'):
+        if "G_DEFINE_AUTOPTR_CLEANUP_FUNC" in line:
+            print(line)
+            continue
+        content += line
+    print("removed G_DEFINES")
+    with open(filename, "w") as file:
+        file.write(content)
+
+
+def prepare(filename):
     os.system("gcc -E -P -D'__inline=' -D'__inline__=' -D'__attribute__(ARGS)=' -D'__restrict=' -D'__asm__(x)=' -D'__builtin_va_list=char*' -D'__extension__=' /home/user/julea/include/julea-kv.h $(pkg-config --cflags glib-2.0 julea julea-object julea-kv julea-db) -o header.h")
     header_content = ""
     with open("header.h") as header:
@@ -34,15 +50,18 @@ def prepare():
     header_content = header_content.replace("_IScntrl = ((9) < 8 ? ((1 << (9)) << 8) : ((1 << (9)) >> 8))", "_IScntrl = 2")
     header_content = header_content.replace("_ISpunct = ((10) < 8 ? ((1 << (10)) << 8) : ((1 << (10)) >> 8))", "_ISpunct = 4")
     header_content = header_content.replace("_ISalnum = ((11) < 8 ? ((1 << (11)) << 8) : ((1 << (11)) >> 8))", "_ISalnum = 8")
-    with open("header_strip.h", "w") as file:
+    with open(filename, "w") as file:
         file.write(header_content)
 
-def test():
-    with open("header_strip.h", "r") as file:
+def test(filename):
+    with open(filename, "r") as file:
         header_content = file.read()
     includes = hp.get_additional_compiler_flags(["glib-2.0", "julea", "julea-object", "julea-kv", "julea-db"])
     include_dirs = hp.get_include_dirs(includes)
-    ffi.cdef(header_content, override=True)
+    constant_defs = """
+                    typedef char... gchar;
+                    """
+    ffi.cdef(constant_defs+header_content, override=True)
     ffi.set_source(
             "julea_kv",
             """
@@ -72,5 +91,6 @@ def alt():
     ffi.compile(verbose=True)
 
 if __name__ == "__main__":
-    prepare()
-    test()
+    filename = "test-header.h"
+    collect_julea(filename)
+    test(filename)

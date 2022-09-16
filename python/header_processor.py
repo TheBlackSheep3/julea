@@ -30,31 +30,32 @@ def get_filename_from_path(path):
 
 def read_header_file_internal(path, include_dirs=[], included_files=[], debug=False):
     content = ""
-    #if debug:
-    #    debug_print(' '.join(include_dirs))
+    if debug:
+        debug_print(' '.join(include_dirs))
     with open(path) as header:
         for line in header:
-            #if debug:
-            #    debug_print(line.strip('\n'))
+            if debug:
+                debug_print(line.strip('\n'))
             is_include_line, filename = is_include(line)
             if is_include_line:
-                #if debug:
-                #    debug_print("is include line")
-                shortened = get_filename_from_path(filename)
-                if shortened in included_files:
+                if debug:
+                    debug_print("is include line")
+                if filename in included_files:
                     continue
                 for directory in include_dirs:
                     path = os.path.join(directory, filename)
                     if os.path.exists(path):
-                        included_files.append(shortened)
-                        #if debug:
-                        #    debug_print("found file {file}".format(file=path))
+                        included_files.append(filename)
+                        if debug:
+                            debug_print("found file {file}".format(file=path))
                         content += read_header_file(path, include_dirs, debug)
                         break;
+                if debug:
+                    debug_print("could not find {file}".format(file=filename))
                 continue
             if is_compiler_directive(line):
-                #if debug:
-                #    debug_print("is compiler directive")
+                if debug:
+                    debug_print("is compiler directive")
                 continue
             content += line
         return content
