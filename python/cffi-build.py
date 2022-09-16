@@ -9,15 +9,19 @@ ffi = cffi.FFI()
 def collect_julea(filename, debug = False):
     constant_defs = """
 typedef int gint;
+typedef unsigned int guint;
 typedef gint gboolean;
 typedef char gchar;
 
+typedef signed int gint32;
 typedef unsigned int guint32;
 typedef signed long gint64;
 typedef unsigned long guint64;
 
 typedef void* gpointer;
 typedef const void *gconstpointer;
+
+typedef unsigned long gsize;
 
 typedef guint32 GQuark;
 
@@ -28,6 +32,13 @@ struct _GError
     gint    code;
     gchar  *message;
 };
+
+typedef	struct _GModule GModule;
+
+typedef struct _GInputStream GInputStream;
+typedef struct _GOutputStream GOutputStream;
+
+typedef void (*GDestroyNotify) (gpointer data);
 
 typedef struct _bson_t
 {
