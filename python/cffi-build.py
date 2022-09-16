@@ -14,9 +14,12 @@ def collect_julea(filename, debug = False):
     content = ""
     for line in output.split('\n'):
         if "G_DEFINE_AUTOPTR_CLEANUP_FUNC" in line:
-            print(line)
             continue
-        content += line
+        if "G_END_DECLS" in line:
+            continue
+        if "G_BEGIN_DECLS" in line:
+            continue
+        content += line+'\n'
     print("removed G_DEFINES")
     with open(filename, "w") as file:
         file.write(content)
@@ -59,7 +62,14 @@ def test(filename):
     includes = hp.get_additional_compiler_flags(["glib-2.0", "julea", "julea-object", "julea-kv", "julea-db"])
     include_dirs = hp.get_include_dirs(includes)
     constant_defs = """
-                    typedef char... gchar;
+                    typedef int gint;
+                    typedef uint32_t guint32;
+                    typedef int64_t gint64;
+                    typedef uint64_t guint64;
+                    typedef gint gboolean;
+                    typedef char gchar;
+                    typedef void* gpointer;
+                    typedef void* const gconstpointer;
                     """
     ffi.cdef(constant_defs+header_content, override=True)
     ffi.set_source(
