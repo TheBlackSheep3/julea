@@ -7,6 +7,35 @@ import header_processor as hp
 ffi = cffi.FFI()
 
 def collect_julea(filename, debug = False):
+    constant_defs = """
+typedef int gint;
+typedef gint gboolean;
+typedef char gchar;
+
+typedef unsigned int guint32;
+typedef signed long gint64;
+typedef unsigned long guint64;
+
+typedef void* gpointer;
+typedef const void *gconstpointer;
+
+typedef guint32 GQuark;
+
+typedef struct _GError GError;
+struct _GError
+{
+    GQuark  domain;
+    gint    code;
+    gchar  *message;
+};
+
+struct bson_t
+{
+    uint32_t    flags;
+    uint32_t    len;
+    uint8_t     padding[120];
+};
+"""
     includes = hp.get_additional_compiler_flags(["julea", "julea-object", "julea-kv", "julea-db"])
     dirs = hp.get_include_dirs(includes)
     output = hp.read_header_file("/home/user/julea/include/julea-kv.h", list(filter(lambda entry: not "dependencies" in entry,dirs)), debug)
@@ -22,7 +51,7 @@ def collect_julea(filename, debug = False):
         content += line+'\n'
     print("removed G_DEFINES")
     with open(filename, "w") as file:
-        file.write(content)
+        file.write(constant_defs+content)
 
 
 def prepare(filename):
@@ -61,17 +90,7 @@ def test(filename):
         header_content = file.read()
     includes = hp.get_additional_compiler_flags(["glib-2.0", "julea", "julea-object", "julea-kv", "julea-db"])
     include_dirs = hp.get_include_dirs(includes)
-    constant_defs = """
-                    typedef int gint;
-                    typedef uint32_t guint32;
-                    typedef int64_t gint64;
-                    typedef uint64_t guint64;
-                    typedef gint gboolean;
-                    typedef char gchar;
-                    typedef void* gpointer;
-                    typedef void* const gconstpointer;
-                    """
-    ffi.cdef(constant_defs+header_content, override=True)
+    ffi.cdef(header_content, override=True)
     ffi.set_source(
             "julea_kv",
             """
