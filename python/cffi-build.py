@@ -38,6 +38,7 @@ typedef	struct _GModule GModule;
 typedef struct _GInputStream GInputStream;
 typedef struct _GOutputStream GOutputStream;
 
+
 typedef void (*GDestroyNotify) (gpointer data);
 
 typedef struct _bson_t
@@ -50,7 +51,6 @@ typedef struct _bson_t
     includes = hp.get_additional_compiler_flags(["julea", "julea-object", "julea-kv", "julea-db"])
     dirs = hp.get_include_dirs(includes)
     output = hp.read_header_file("/home/user/julea/include/julea-kv.h", list(filter(lambda entry: not "dependencies" in entry,dirs)), debug)
-    print("got file content")
     content = ""
     for line in output.split('\n'):
         if "G_DEFINE_AUTOPTR_CLEANUP_FUNC" in line:
@@ -60,7 +60,7 @@ typedef struct _bson_t
         if "G_BEGIN_DECLS" in line:
             continue
         content += line+'\n'
-    print("removed G_DEFINES")
+    content = content.replace("G_GNUC_WARN_UNUSED_RESULT", "")
     with open(filename, "w") as file:
         file.write(constant_defs+content)
 
