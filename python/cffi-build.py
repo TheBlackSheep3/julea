@@ -52,7 +52,7 @@ typedef struct _bson_t
     uint8_t     padding[120];
 } bson_t;
 """
-    includes = hp.get_additional_compiler_flags(["julea", "julea-object", "julea-kv", "julea-db"])
+    includes = hp.get_additional_compiler_flags(["julea", "julea-object", "julea-kv", "julea-db", "julea-item"])
     dirs = hp.get_include_dirs(includes)
     output = hp.read_header_file("/home/user/julea/include/julea-kv.h", list(filter(lambda entry: not "dependencies" in entry,dirs)), debug)
     content = ""
