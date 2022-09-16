@@ -13,6 +13,7 @@ typedef unsigned int guint;
 typedef gint gboolean;
 typedef char gchar;
 
+typedef unsigned short guint16;
 typedef signed int gint32;
 typedef unsigned int guint32;
 typedef signed long gint64;
@@ -38,6 +39,9 @@ typedef	struct _GModule GModule;
 typedef struct _GInputStream GInputStream;
 typedef struct _GOutputStream GOutputStream;
 
+typedef struct _GKeyFile GKeyFile;
+
+typedef struct _GSocketConnection GSocketConnection;
 
 typedef void (*GDestroyNotify) (gpointer data);
 
