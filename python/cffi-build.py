@@ -29,12 +29,12 @@ struct _GError
     gchar  *message;
 };
 
-struct bson_t
+typedef struct _bson_t
 {
     uint32_t    flags;
     uint32_t    len;
     uint8_t     padding[120];
-};
+} bson_t;
 """
     includes = hp.get_additional_compiler_flags(["julea", "julea-object", "julea-kv", "julea-db"])
     dirs = hp.get_include_dirs(includes)
