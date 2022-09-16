@@ -65,6 +65,7 @@ typedef struct _bson_t
             continue
         content += line+'\n'
     content = content.replace("G_GNUC_WARN_UNUSED_RESULT", "")
+    content = content.replace("G_GNUC_PRINTF(2, 3)", "")
     with open(filename, "w") as file:
         file.write(constant_defs+content)
 
