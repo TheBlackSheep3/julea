@@ -6,9 +6,8 @@ import header_processor as hp
 
 ffi = cffi.FFI()
 
-def collect_julea(filename, debug = False):
-    constant_defs = """
-typedef int gint;
+def create_header(filename):
+    content = """typedef int gint;
 typedef unsigned int guint;
 typedef gint gboolean;
 typedef char gchar;
@@ -51,24 +50,40 @@ typedef struct _bson_t
     uint32_t    len;
     uint8_t     padding[120];
 } bson_t;
-"""
-    includes = hp.get_additional_compiler_flags(["julea", "julea-object", "julea-kv", "julea-db", "julea-item"])
-    dirs = hp.get_include_dirs(includes)
-    output = hp.read_header_file("/home/user/julea/include/julea-kv.h", list(filter(lambda entry: not "dependencies" in entry,dirs)), debug)
-    content = ""
-    for line in output.split('\n'):
-        if "G_DEFINE_AUTOPTR_CLEANUP_FUNC" in line:
-            continue
-        if "G_END_DECLS" in line:
-            continue
-        if "G_BEGIN_DECLS" in line:
-            continue
-        content += line+'\n'
-    content = content.replace("G_GNUC_WARN_UNUSED_RESULT", "")
-    content = content.replace("G_GNUC_PRINTF(2, 3)", "")
-    with open(filename, "w") as file:
-        file.write(constant_defs+content)
 
+#include <julea-kv.h>
+"""
+    with open(filename, "w") as file:
+        file.write(content)
+
+
+def collect_julea(filename, debug = False):
+    temp_filename = "temp.h"
+    create_header(temp_filename)
+    includes = hp.get_additional_compiler_flags(["julea", "julea-object", "julea-kv", "julea-db", "julea-item"])
+    flags = list(filter(lambda entry: not "dependencies" in entry, includes))
+    # create dummy headers for files intentionally not included
+    with open("glib.h", "w") as file:
+        file.write("")
+    with open("gmodule.h", "w") as file:
+        file.write("")
+    with open("bson.h", "w") as file:
+        file.write("")
+    os.system("mkdir -p gio")
+    with open("gio/gio.h", "w") as file:
+        file.write("")
+    # list of macros to be ignored
+    macros = [
+            "-D'G_DEFINE_AUTOPTR_CLEANUP_FUNC(x, y)='",
+            "-D'G_END_DECLS='",
+            "-D'G_BEGIN_DECLS='",
+            "-D'G_GNUC_WARN_UNUSED_RESULT='",
+            "-D'G_GNUC_PRINTF(x, y)='"
+            ]
+    # let preprocessor collect all declarations
+    os.system("gcc -E -P {macros} {file} -I. {include_flags} -o {output}".format(file=temp_filename, include_flags=' '.join(flags), output=filename, macros=' '.join(macros)))
+    # remove temporary files needed to please the preprocessor
+    os.system("rm -rf glib.h gmodule.h bson.h gio {file}".format(file=temp_filename))
 
 def prepare(filename):
     os.system("gcc -E -P -D'__inline=' -D'__inline__=' -D'__attribute__(ARGS)=' -D'__restrict=' -D'__asm__(x)=' -D'__builtin_va_list=char*' -D'__extension__=' /home/user/julea/include/julea-kv.h $(pkg-config --cflags glib-2.0 julea julea-object julea-kv julea-db) -o header.h")
@@ -101,7 +116,7 @@ def prepare(filename):
     with open(filename, "w") as file:
         file.write(header_content)
 
-def test(filename):
+def test(filename, debug=False):
     with open(filename, "r") as file:
         header_content = file.read()
     includes = hp.get_additional_compiler_flags(["glib-2.0", "julea", "julea-object", "julea-kv", "julea-db"])
@@ -119,7 +134,9 @@ def test(filename):
             extra_compile_args=includes,
             extra_link_args=["-Wl,-rpath,."]
             )
-    ffi.compile(verbose=True)
+    ffi.compile(verbose=debug)
+    if not debug:
+        os.system("rm -f {file}".format(file=filename))
 
 def alt():
     os.system("gcc -E -P -DJULEA_KV_COMPILATION -D'__inline=' -D'__inline__=' -D'__attribute__(ARGS)=' -D'__restrict=' -D'__asm__(x)=' -D'__builtin_va_list=char*' -D'__extension__=' /home/user/julea/include/julea-kv.h $(pkg-config --cflags glib-2.0 julea julea-object julea-kv julea-db) -o header.h")
@@ -137,5 +154,6 @@ def alt():
 
 if __name__ == "__main__":
     filename = "test-header.h"
-    collect_julea(filename)
-    test(filename)
+    debug = False
+    collect_julea(filename, debug)
+    test(filename, debug)
