@@ -119,20 +119,19 @@ def prepare(filename):
 def test(filename, debug=False):
     with open(filename, "r") as file:
         header_content = file.read()
-    includes = hp.get_additional_compiler_flags(["glib-2.0", "julea", "julea-object", "julea-kv", "julea-db"])
+    includes = hp.get_additional_compiler_flags(["glib-2.0", "julea", "julea-object", "julea-kv", "julea-db"], remove_sanitize=False)
     include_dirs = hp.get_include_dirs(includes)
     ffi.cdef(header_content, override=True)
     ffi.set_source(
             "julea_kv",
             """
                 #include "julea-kv.h"
-                #include "julea.h"
             """,
-            libraries=["julea-kv", "julea"],
+            libraries=["julea", "julea-object", "julea-kv", "julea-db", "kv-null"],
             include_dirs=include_dirs,
-            library_dirs=["bld"],
+            library_dirs=["/home/user/julea/bld"],
             extra_compile_args=includes,
-            extra_link_args=["-Wl,-rpath,."]
+            extra_link_args=["-fsanitize=address", "-static-libasan", "-Wl,-rpath,."]
             )
     ffi.compile(verbose=debug)
     if not debug:
@@ -154,6 +153,6 @@ def alt():
 
 if __name__ == "__main__":
     filename = "test-header.h"
-    debug = False
+    debug = True
     collect_julea(filename, debug)
     test(filename, debug)
