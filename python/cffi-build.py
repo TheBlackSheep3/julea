@@ -119,7 +119,7 @@ def prepare(filename):
 def test(filename, debug=False):
     with open(filename, "r") as file:
         header_content = file.read()
-    includes = hp.get_additional_compiler_flags(["glib-2.0", "julea", "julea-object", "julea-kv", "julea-db"], remove_sanitize=False)
+    includes = hp.get_additional_compiler_flags(["glib-2.0", "julea", "julea-kv"], remove_sanitize=False)
     include_dirs = hp.get_include_dirs(includes)
     ffi.cdef(header_content, override=True)
     ffi.set_source(
@@ -127,7 +127,7 @@ def test(filename, debug=False):
             """
                 #include "julea-kv.h"
             """,
-            libraries=["julea", "julea-object", "julea-kv", "julea-db", "kv-null"],
+            libraries=["julea", "julea-kv", "kv-null"],
             include_dirs=include_dirs,
             library_dirs=["/home/user/julea/bld"],
             extra_compile_args=includes,
