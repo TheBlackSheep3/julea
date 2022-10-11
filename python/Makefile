@@ -1,18 +1,9 @@
-CC=g++
-CFLAGS=-Wall -Werror -Wextra -std=c++11
-LIBNAME=header_processor
-APPNAME=test-app
+CFLAGS := -std=c11 -Wall -Wextra -Wpedantic -Og $(shell pkg-config --cflags glib-2.0 julea julea-object julea-kv julea-db)
+LDLIBS := $(shell pkg-config --libs glib-2.0 julea julea-object julea-kv julea-db)
 
-$(APPNAME): lib$(LIBNAME).so $(APPNAME).cpp
-	$(CC) $(CFLAGS) -c -o $(APPNAME).o $(APPNAME).cpp
-	$(CC) -L. -l$(LIBNAME) -o $(APPNAME) $(APPNAME).o -Wl,-rpath,.
+BIN = retrieve
 
-lib$(LIBNAME).so: $(LIBNAME).cpp
-	$(CC) -fPIC $(CFLAGS) $(LIBNAME).cpp -shared -o lib$(LIBNAME).so
-
-cffi: lib$(LIBNAME).so
-	python cffi_build.py
-	rm -f cffi_libexample.cpp
+all: $(BIN)
 
 clean:
-	$(RM) -f *.o *.so $(APPNAME)
+	rm -f $(BIN)
