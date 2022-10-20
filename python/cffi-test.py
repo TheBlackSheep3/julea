@@ -13,10 +13,18 @@ value = "Hello World!"
 libkv.j_kv_put(kv, ffi.new('char[]', value.encode('utf-8')), len(value)+1, ffi.NULL, batch)
 
 if (libkv.j_batch_execute(batch)):
-    buffer = bytes(128)
-    length = 0
-    # TODO pass correct object to recieve return value
-#    libkv.j_kv_get(kv, buffer, length, batch)
-#
-#    if (libkv.j_batch_execute(batch)):
-#        print("KV contains: {value} ({length} bytes)".format(value=buffer.decode(), length=length))
+    length = ffi.new('unsigned int*')
+
+    p = ffi.new('void**')
+    libkv.j_kv_get(kv, p, length, batch)
+
+    if (libkv.j_batch_execute(batch)):
+        char = ffi.cast('char*', p[0])
+        string = ""
+        i = 0
+        byte = char[i]
+        while byte != b'\x00':
+            string += byte.decode()
+            i += 1
+            byte = char[i]
+        print("KV contains: '{value}' ({length} bytes)".format(value=string, length=length[0]))
