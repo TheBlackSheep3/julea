@@ -17,14 +17,13 @@ main()
 	g_autofree gpointer value = NULL;
 	guint32 length = 0;
 
-	kv = j_kv_new("python", "value");
-	j_kv_get(kv, &value, &length, batch);
+	kv = j_kv_new("c", "value");
+	gchar const* value = "Hello from C :)";
+	j_kv_put(kv, g_strdup(value), strlen(value) + 1, g_free, batch);
 	if (j_batch_execute(batch))
 	{
-		printf("C says KV contains: %s (%" G_GUINT64_FORMAT " bytes)\n", (gchar*)value, length);
-		j_kv_delete(kv, batch);
-		j_batch_execute(batch);
+		return 0;
 	}
 
-	return 0;
+	return 1;
 }
