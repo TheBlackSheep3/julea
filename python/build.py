@@ -1,3 +1,8 @@
+import os
+import cffi
+
+ffi = cffi.FFI()
+
 def create_header(filename):
     content = """typedef int gint;
 typedef unsigned int guint;
@@ -48,10 +53,24 @@ typedef struct _bson_t
     with open(filename, "w") as file:
         file.write(content)
 
+def get_additional_compiler_flags(libraries, remove_sanitize=True):
+    flags_buffer = os.popen("pkg-config --cflags {libs}".format(libs=' '.join(libraries)))
+    flags = flags_buffer.read().strip().split(' ')
+    # remove duplicate parameters
+    flags = [*set(flags)]
+    if remove_sanitize:
+        for s in flags:
+            if "-fsanitize" in s:
+                flags.remove(s)
+    return flags
+
+def get_include_dirs(flags):
+    return [ str.strip("-I") for str in flags if "-I" in str ]
+
 def collect_julea(filename, debug = False):
     temp_filename = "temp.h"
     create_header(temp_filename)
-    includes = hp.get_additional_compiler_flags(["julea", "julea-object", "julea-kv", "julea-db", "julea-item"])
+    includes = get_additional_compiler_flags(["julea", "julea-object", "julea-kv", "julea-db", "julea-item"])
     flags = list(filter(lambda entry: not "dependencies" in entry, includes))
     # create dummy headers for files intentionally not included
     with open("glib.h", "w") as file:
@@ -79,14 +98,14 @@ def collect_julea(filename, debug = False):
 def process(libraryname, libs, tempheader, debug=False):
     with open(tempheader, "r") as file:
         header_content = file.read()
-    includes = hp.get_additional_compiler_flags(libs+["glib-2.0"], remove_sanitize=True)
-    include_dirs = hp.get_include_dirs(includes)
+    includes = get_additional_compiler_flags(libs+["glib-2.0"], remove_sanitize=True)
+    include_dirs = get_include_dirs(includes)
     ffi.cdef(header_content, override=True)
     ffi.set_source(
-            libraryname.replace('-', '_'),
+            libraryname,
             """
                 #include "{libname}.h"
-            """.format(libname=libraryname),
+            """.format(libname=libraryname.replace('_', '-')),
             libraries=libs+["kv-null"],
             include_dirs=include_dirs,
             library_dirs=["/home/user/julea/bld"],
@@ -106,4 +125,4 @@ if __name__ == "__main__":
     filename = "test-header.h"
     debug = True
     collect_julea(filename, debug)
-    process(filename, debug)
+    build("julea_kv", ["julea", "julea-kv"], debug)
