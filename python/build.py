@@ -114,7 +114,7 @@ def process(libraryname, libs, tempheader, debug=False):
             )
     ffi.compile(verbose=debug)
     if not debug:
-        os.system("rm -f {file}".format(file=tempheader))
+        os.system("rm -f {file} {name}.o {name}.c".format(file=tempheader, name=libraryname))
 
 def build(library_name, include_libs, debug=False):
     header_name = "header_{base}.h".format(base=library_name)
@@ -123,6 +123,6 @@ def build(library_name, include_libs, debug=False):
 
 if __name__ == "__main__":
     filename = "test-header.h"
-    debug = True
-    collect_julea(filename, debug)
-    build("julea_kv", ["julea", "julea-kv"], debug)
+    collect_julea(filename)
+    build("julea_kv", ["julea", "julea-kv"])
+    os.system("rm -rf {file}".format(file=filename))
