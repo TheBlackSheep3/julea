@@ -21,7 +21,7 @@ main()
 	j_kv_get(kv, &value, &length, batch);
 	if (j_batch_execute(batch))
 	{
-		printf("C says KV contains: %s (%" G_GUINT64_FORMAT " bytes)\n", (gchar*)value, length);
+		printf("C says KV contains: '%s' (%" G_GUINT64_FORMAT " bytes)\n", (gchar*)value, length);
 		j_kv_delete(kv, batch);
 		j_batch_execute(batch);
 	}
