@@ -14,9 +14,6 @@ main()
 
 	batch = j_batch_new_for_template(J_SEMANTICS_TEMPLATE_DEFAULT);
 
-	g_autofree gpointer value = NULL;
-	guint32 length = 0;
-
 	kv = j_kv_new("c", "value");
 	gchar const* value = "Hello from C :)";
 	j_kv_put(kv, g_strdup(value), strlen(value) + 1, g_free, batch);
