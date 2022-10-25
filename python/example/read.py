@@ -24,5 +24,5 @@ if (libkv.j_batch_execute(batch)):
         byte = char[i]
     print("Python says KV contains: '{value}' ({length} bytes)".format(value=string, length=length[0]))
     # clean up
-    libkv.j_kv_delte(kv, batch)
+    libkv.j_kv_delete(kv, batch)
     libkv.j_batch_execute(batch)
