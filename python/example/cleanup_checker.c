@@ -21,7 +21,7 @@ main()
 	j_kv_get(kv, &value, &length, batch);
 	if (j_batch_execute(batch))
 	{
-		printf("value written by Python was not removed correctly");
+		printf("value written by Python was not removed correctly\n");
 		j_kv_delete(kv, batch);
 		j_batch_execute(batch);
 	}
@@ -30,7 +30,7 @@ main()
 	j_kv_get(kv, &value, &length, batch);
 	if (j_batch_execute(batch))
 	{
-		printf("value written by C was not removed correctly");
+		printf("value written by C was not removed correctly\n");
 		j_kv_delete(kv, batch);
 		j_batch_execute(batch);
 	}
