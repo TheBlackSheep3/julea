@@ -1,4 +1,5 @@
-import os
+from os import popen, system
+from os.path import dirname
 import cffi
 
 ffi = cffi.FFI()
@@ -54,7 +55,7 @@ typedef struct _bson_t
         file.write(content)
 
 def get_additional_compiler_flags(libraries, remove_sanitize=True):
-    flags_buffer = os.popen("pkg-config --cflags {libs}".format(libs=' '.join(libraries)))
+    flags_buffer = popen("pkg-config --cflags {libs}".format(libs=' '.join(libraries)))
     flags = flags_buffer.read().strip().split(' ')
     # remove duplicate parameters
     flags = [*set(flags)]
@@ -79,7 +80,7 @@ def collect_julea(filename, debug = False):
         file.write("")
     with open("bson.h", "w") as file:
         file.write("")
-    os.system("mkdir -p gio")
+    system("mkdir -p gio")
     with open("gio/gio.h", "w") as file:
         file.write("")
     # list of macros to be ignored
@@ -91,9 +92,9 @@ def collect_julea(filename, debug = False):
             "-D'G_GNUC_PRINTF(x, y)='"
             ]
     # let preprocessor collect all declarations
-    os.system("gcc -E -P {macros} {file} -I. {include_flags} -o {output}".format(file=temp_filename, include_flags=' '.join(flags), output=filename, macros=' '.join(macros)))
+    system("gcc -E -P {macros} {file} -I. {include_flags} -o {output}".format(file=temp_filename, include_flags=' '.join(flags), output=filename, macros=' '.join(macros)))
     # remove temporary files needed to please the preprocessor
-    os.system("rm -rf glib.h gmodule.h bson.h gio {file}".format(file=temp_filename))
+    system("rm -rf glib.h gmodule.h bson.h gio {file}".format(file=temp_filename))
 
 def process(libraryname, libs, tempheader, debug=False):
     with open(tempheader, "r") as file:
@@ -101,6 +102,7 @@ def process(libraryname, libs, tempheader, debug=False):
     includes = get_additional_compiler_flags(libs+["glib-2.0"], remove_sanitize=True)
     include_dirs = get_include_dirs(includes)
     ffi.cdef(header_content, override=True)
+    outdir = "{currentdir}/../bld/".format(currentdir=dirname(__file__))
     ffi.set_source(
             libraryname,
             """
@@ -108,13 +110,13 @@ def process(libraryname, libs, tempheader, debug=False):
             """.format(libname=libraryname.replace('_', '-')),
             libraries=libs+["kv-null"],
             include_dirs=include_dirs,
-            library_dirs=["/home/user/julea/bld"],
+            library_dirs=[outdir],
             extra_compile_args=includes,
             extra_link_args=["-Wl,-rpath,."]
             )
-    ffi.compile(verbose=debug)
+    ffi.compile(tmpdir=outdir, verbose=debug)
     if not debug:
-        os.system("rm -f {file} {name}.o {name}.c".format(file=tempheader, name=libraryname))
+        system("rm -f {file} {name}.o {name}.c".format(file=tempheader, name=outdir+libraryname))
 
 def build(library_name, include_libs, debug=False):
     header_name = "header_{base}.h".format(base=library_name)
