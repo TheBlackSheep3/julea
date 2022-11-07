@@ -2,9 +2,7 @@ from os import popen, system
 from os.path import dirname
 import cffi
 
-ffi = cffi.FFI()
-
-def create_header(filename):
+def create_header(filename, library):
     content = """typedef int gint;
 typedef unsigned int guint;
 typedef gint gboolean;
@@ -49,8 +47,8 @@ typedef struct _bson_t
     uint8_t     padding[120];
 } bson_t;
 
-#include <julea-kv.h>
 """
+    content+=f"#include <{library}.h>"
     with open(filename, "w") as file:
         file.write(content)
 
@@ -68,9 +66,9 @@ def get_additional_compiler_flags(libraries, remove_sanitize=True):
 def get_include_dirs(flags):
     return [ str.strip("-I") for str in flags if "-I" in str ]
 
-def collect_julea(filename, debug = False):
+def collect_julea(filename, library, debug = False):
     temp_filename = "temp.h"
-    create_header(temp_filename)
+    create_header(temp_filename, library)
     includes = get_additional_compiler_flags(["julea", "julea-object", "julea-kv", "julea-db", "julea-item"])
     flags = list(filter(lambda entry: not "dependencies" in entry, includes))
     # create dummy headers for files intentionally not included
@@ -97,6 +95,7 @@ def collect_julea(filename, debug = False):
     system("rm -rf glib.h gmodule.h bson.h gio {file}".format(file=temp_filename))
 
 def process(libraryname, libs, tempheader, debug=False):
+    ffi = cffi.FFI()
     with open(tempheader, "r") as file:
         header_content = file.read()
     includes = get_additional_compiler_flags(libs+["glib-2.0"], remove_sanitize=True)
@@ -120,5 +119,5 @@ def process(libraryname, libs, tempheader, debug=False):
 
 def build(library_name, include_libs, debug=False):
     header_name = "header_{base}.h".format(base=library_name)
-    collect_julea(header_name, debug)
+    collect_julea(header_name, library_name.replace('_','-'), debug)
     process(library_name, include_libs, header_name, debug)
