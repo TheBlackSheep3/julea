@@ -1,11 +1,5 @@
-from julea_core import lib as JCore
-from julea_kv import lib as JKV
-from julea_object import lib as JObject
-from julea_db import lib as JDB
-from julea_item import lib as JItem
-from cffi import FFI
+from julea_wrapper import lib, ffi
 
-ffi = FFI()
 encoding = 'utf-8'
 NULL = ffi.NULL
 
@@ -46,18 +40,18 @@ class JBatchResult:
 
 class JBatch:
     def __init__(self, result):
-        self.batch = JCore.j_batch_new_for_template(JCore.J_SEMANTICS_TEMPLATE_DEFAULT)
+        self.batch = lib.j_batch_new_for_template(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
         self.result = result
 
     def __enter__(self):
         return self.batch
 
     def __exit__(self, exc_type, exc_value, tb):
-        if JKV.j_batch_execute(self.batch):
+        if lib.j_batch_execute(self.batch):
             self.result.Succeed()
         else:
             self.result.Fail()
-        JCore.j_batch_unref(self.batch)
+        lib.j_batch_unref(self.batch)
         if exc_type is not None:
             return False
         else:
