@@ -94,7 +94,7 @@ def collect_julea(filename, library, debug = False):
     # remove temporary files needed to please the preprocessor
     system("rm -rf glib.h gmodule.h bson.h gio {file}".format(file=temp_filename))
 
-def process(libraryname, libs, tempheader, debug=False):
+def process(libraryname, include_name, libs, tempheader, debug=False):
     ffi = cffi.FFI()
     with open(tempheader, "r") as file:
         header_content = file.read()
@@ -106,7 +106,7 @@ def process(libraryname, libs, tempheader, debug=False):
             libraryname,
             """
                 #include "{libname}.h"
-            """.format(libname=libraryname.replace('_', '-')),
+            """.format(libname=include_name),
             libraries=libs+["kv-null"],
             include_dirs=include_dirs,
             library_dirs=[outdir],
@@ -117,7 +117,10 @@ def process(libraryname, libs, tempheader, debug=False):
     if not debug:
         system("rm -f {file} {name}.o {name}.c".format(file=tempheader, name=outdir+libraryname))
 
-def build(library_name, include_libs, debug=False):
+def copy_main_module():
+    system("cp {currentdir}/{file} {currentdir}/../bld/{file}".format(currentdir=dirname(__file__), file="julea.py"))
+
+def build(library_name, include_name, include_libs, debug=False):
     header_name = "header_{base}.h".format(base=library_name)
-    collect_julea(header_name, library_name.replace('_','-'), debug)
-    process(library_name, include_libs, header_name, debug)
+    collect_julea(header_name, include_name, debug)
+    process(library_name, include_name, include_libs, header_name, debug)
