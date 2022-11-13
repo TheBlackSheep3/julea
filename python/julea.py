@@ -1,3 +1,4 @@
+from julea_core import lib as JCore
 from julea_kv import lib as JKV
 from julea_object import lib as JObject
 from julea_db import lib as JDB
@@ -45,7 +46,7 @@ class JBatchResult:
 
 class JBatch:
     def __init__(self, result):
-        self.batch = JKV.j_batch_new_for_template(JKV.J_SEMANTICS_TEMPLATE_DEFAULT)
+        self.batch = JCore.j_batch_new_for_template(JCore.J_SEMANTICS_TEMPLATE_DEFAULT)
         self.result = result
 
     def __enter__(self):
@@ -56,7 +57,7 @@ class JBatch:
             self.result.Succeed()
         else:
             self.result.Fail()
-        JKV.j_batch_unref(self.batch)
+        JCore.j_batch_unref(self.batch)
         if exc_type is not None:
             return False
         else:
