@@ -1,15 +1,6 @@
 from julea_wrapper import lib, ffi
 
 encoding = 'utf-8'
-NULL = ffi.NULL
-
-def get_uint_ptr():
-    result = ffi.new('unsigned int *')
-    return result
-
-def get_void_ptr_ptr():
-    result = ffi.new('void * *')
-    return result
 
 def encode(string):
     result = ffi.new('char[]', string.encode(encoding)) 
@@ -17,14 +8,14 @@ def encode(string):
 
 def read_from_buffer(buffer):
     char = ffi.cast('char*', buffer)
-    string = ""
+    bytearr = b''
     i = 0
     byte = char[i]
     while byte != b'\x00':
-        string += byte.decode()
+        bytearr += byte
         i += 1
         byte = char[i]
-    return string
+    return bytearr.decode()
 
 class JBatchResult:
     IsSuccess = False
