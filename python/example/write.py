@@ -1,19 +1,15 @@
-import sys
-from os.path import dirname
-
-sys.path.insert(0, "{currentdir}/../../bld/".format(currentdir=dirname(__file__)))
-
-from julea_kv import lib as libkv
+from julea import JKV, JBatch, JBatchResult, NULL
 import cffi
 ffi = cffi.FFI()
 
-batch = libkv.j_batch_new_for_template(libkv.J_SEMANTICS_TEMPLATE_DEFAULT)
-kv = libkv.j_kv_new("python".encode('utf-8'), "value".encode('utf-8'))
+res = JBatchResult()
+with JBatch(res) as batch:
+    kv = libkv.j_kv_new(encode("python"), encode("value"))
 
-value = "Hello from Python!"
-libkv.j_kv_put(kv, ffi.new('char[]', value.encode('utf-8')), len(value)+1, ffi.NULL, batch)
+    value = "Hello from Python!"
+    JKV.j_kv_put(kv, encode(value), len(value)+1, NULL, batch)
 
-if (libkv.j_batch_execute(batch)):
+if (res.IsSuccess):
     sys.exit(0)
 
 sys.exit(1)

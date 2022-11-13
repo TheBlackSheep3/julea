@@ -1,8 +1,3 @@
-import sys
-from os.path import dirname
-
-sys.path.insert(0, "{currentdir}/../../bld/".format(currentdir=dirname(__file__)))
-
 from julea_kv import lib as libkv
 import cffi
 ffi = cffi.FFI()
