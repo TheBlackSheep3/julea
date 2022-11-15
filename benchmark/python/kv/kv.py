@@ -50,6 +50,7 @@ def _benchmark_kv_get(run, use_batch):
         kv = lib.j_kv_new(encode("benchmark"), encode(name))
         lib.j_kv_put(kv, encode(name), len(name) + 1, ffi.NULL, batch)
         lib.j_kv_delte(kv, deletebatch)
+        lib.j_kv_unref(kv)
     assert lib.j_batch_execute(batch)
     run.start_timer()
     for i in range(run.iterations):
@@ -65,3 +66,52 @@ def _benchmark_kv_get(run, use_batch):
     assert lib.j_batch_execute(deletebatch)
     lib.j_batch_unref(batch)
     lib.j_batch_unref(deletebatch)
+
+def benchmark_kv_delete(run):
+    _benchmark_kv_delete(run, False)
+
+def benchmark_kv_delete_batch(run):
+    _benchmark_kv_delete(run, True)
+
+def _benchmark_kv_delete(run, use_batch):
+    batch = lib.j_batch_new_for_template(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
+    for i in range(run.iterations):
+        name = f"benchmark-{i}"
+        kv = lib.j_kv_new(encode("benchmark"), encode(name))
+        lib.j_kv_put(kv, encode("empty"), 6, ffi.NULL, batch)
+        lib.j_kv_unref(kv)
+    assert lib.j_batch_execute(batch)
+    run.start_timer()
+    for i in range(run.iterations):
+        name = f"benchmark-{i}"
+        kv = lib.j_kv_new(encode("benchmark"), encode(name))
+        lib.j_kv_delete(kv, batch)
+        if not use_batch:
+            assert lib.j_batch_execute(batch)
+        lib.j_kv_unref(kv)
+    if use_batch:
+        assert lib.j_batch_execute(batch)
+    run.stop_timer()
+    lib.j_batch_unref(batch)
+
+def benchmark_kv_unordered_put_delete(run):
+    _benchmark_kv_unordered_put_delete(run, False)
+
+def benchmark_kv_unordered_put_delete_batch(run):
+    _benchmark_kv_unordered_put_delete(run, True)
+
+def _benchmark_kv_unordered_put_delete(run, use_batch):
+    batch = lib.j_batch_new_for_template(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
+    run.start_timer()
+    for i in range(run.iterations):
+        name = f"benchmark-{i}"
+        kv = lib.j_kv_new(encode("benchmark"), encode(name))
+        lib.j_kv_put(kv, encode("empty"), 6, ffi.NULL, batch)
+        lib.j_kv_delete(kv, batch)
+        if not use_batch:
+            assert lib.j_batch_execute(batch)
+        lib.j_kv_unref(kv)
+    if use_batch:
+        assert lib.j_batch_execute(batch)
+    run.stop_timer()
+    lib.j_batch_unref(batch)
