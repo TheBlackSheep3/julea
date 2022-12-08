@@ -85,27 +85,28 @@ def benchmark_distributed_object_status_batch(run):
 	_benchmark_distributed_object_status(run, True)
 
 def _benchmark_distributed_object_status(run, use_batch):
-	# TODO: finish _benchmark_distributed_object_status implementation
+	distribution = lib.j_distribution_new(lib.J_DISTRIBUTION_ROUND_ROBIN)
 	batch = lib.j_batch_new_for_template(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
-	obj = lib.j_object_new(encode("benchmark"), encode("benchmark"))
-	lib.j_object_create(obj, batch)
+	obj = lib.j_distributed_object_new(encode("benchmark"), encode("benchmark"),
+									distribution)
+	lib.j_distributed_object_create(obj, batch)
 	size_ptr = ffi.new("unsigned long*")
 	modification_time_ptr = ffi.new("long*")
-	lib.j_object_write(obj, encode("A"), 1, 0, size_ptr, batch)
+	lib.j_distributed_object_write(obj, encode("A"), 1, 0, size_ptr, batch)
 	assert lib.j_batch_execute(batch)
 	run.start_timer()
 	for i in range(run.iterations):
-		lib.j_object_status(obj, modification_time_ptr, size_ptr, batch)
+		lib.j_distributed_object_status(obj, modification_time_ptr, size_ptr, batch)
 		if not use_batch:
 			assert lib.j_batch_execute(batch)
 	if use_batch:
 		assert lib.j_batch_execute(batch)
 	run.stop_timer()
-	lib.j_object_delete(obj, batch)
+	lib.j_distributed_object_delete(obj, batch)
 	assert lib.j_batch_execute(batch)
-	lib.j_object_unref(obj)
+	lib.j_distributed_object_unref(obj)
 	lib.j_batch_unref(batch)
-
+	lib.j_distribution_unref(distribution)
 	
 def benchmark_distributed_object_read(run):
 	_benchmark_distributed_object_read(run, False)
@@ -115,7 +116,7 @@ def benchmark_distributed_object_read_batch(run):
 
 def _benchmark_distributed_object_read(run, use_batch):
 	# TODO: implement _benchmark_distributed_object_read
-    return
+	return
 
 def benchmark_distributed_object_write(run):
 	_benchmark_distributed_object_write(run, False)
@@ -125,7 +126,7 @@ def benchmark_distributed_object_write_batch(run):
 
 def _benchmark_distributed_object_write(run, use_batch):
 	# TODO: implement _benchmark_distributed_object_write
-    return
+	return
 
 def benchmark_distributed_object_unordered_create_delete(run):
 	_benchmark_distributed_object_unordered_create_delete(run, False)
@@ -135,4 +136,4 @@ def benchmark_distributed_object_unordered_create_delete_batch(run):
 
 def _benchmark_distributed_object_unordered_create_delete(run, use_batch):
 	# TODO: implement _benchmark_distributed_object_unordered_create_delete
-    return
+	return
