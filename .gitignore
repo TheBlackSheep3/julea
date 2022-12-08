@@ -24,7 +24,7 @@ bld*/
 .vscode/
 
 # Python
-*/__pycache__/
+**/__pycache__/
 
 # C/C++ LSP
 .ccls-cache/
