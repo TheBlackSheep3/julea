@@ -29,7 +29,7 @@ struct _GError
     gchar  *message;
 };
 
-typedef	struct _GModule GModule;
+typedef    struct _GModule GModule;
 
 typedef struct _GInputStream GInputStream;
 typedef struct _GOutputStream GOutputStream;

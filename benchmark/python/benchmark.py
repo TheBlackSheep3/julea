@@ -8,21 +8,21 @@ from item.collection import benchmark_collection
 from item.item import benchmark_item
 
 if __name__ == "__main__":
-	runs = []
-	iterations = 1000
+    runs = []
+    iterations = 1000
 
-	# KV Client
-	benchmark_kv(runs, iterations)
+    # KV Client
+    benchmark_kv(runs, iterations)
 
-	# Object Client
-	benchmark_distributed_object(runs, iterations)
-	benchmark_object(runs, iterations)
+    # Object Client
+    benchmark_distributed_object(runs, iterations)
+    benchmark_object(runs, iterations)
 
-	# DB Client
-	benchmark_db_entry(runs, iterations)
-	benchmark_db_iterator(runs, iterations)
-	benchmark_db_schema(runs, iterations)
+    # DB Client
+    benchmark_db_entry(runs, iterations)
+    benchmark_db_iterator(runs, iterations)
+    benchmark_db_schema(runs, iterations)
 
-	# Item Client
-	benchmark_collection(runs, iterations)
-	benchmark_item(runs, iterations)
+    # Item Client
+    benchmark_collection(runs, iterations)
+    benchmark_item(runs, iterations)
