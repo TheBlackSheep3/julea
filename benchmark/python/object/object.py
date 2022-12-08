@@ -53,7 +53,7 @@ def _benchmark_object_delete(run, use_batch):
     for i in range(run.iterations):
         name = f"benchmark-{i}"
         obj = lib.j_object_new(encode("benchmark"), encode(name))
-        lib.j_object_create(obj, encode("empty"), 6, ffi.NULL, batch)
+        lib.j_object_create(obj, batch)
         lib.j_object_unref(obj)
     assert lib.j_batch_execute(batch)
     run.start_timer()
