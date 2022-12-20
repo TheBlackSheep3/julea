@@ -27,7 +27,7 @@ def _benchmark_kv_put(run, use_batch):
         kv = lib.j_kv_new(namespace, name)
         empty = encode("empty")
         lib.j_kv_put(kv, empty, 6, ffi.NULL, batch)
-        lib.j_kv_delte(kv, deletebatch)
+        lib.j_kv_delete(kv, deletebatch)
         if not use_batch:
             assert lib.j_batch_execute(batch)
         lib.j_kv_unref(kv)
@@ -52,7 +52,7 @@ def _benchmark_kv_get(run, use_batch):
         namespace = encode("benchmark")
         kv = lib.j_kv_new(namespace, name)
         lib.j_kv_put(kv, name, len(name), ffi.NULL, batch)
-        lib.j_kv_delte(kv, deletebatch)
+        lib.j_kv_delete(kv, deletebatch)
         lib.j_kv_unref(kv)
     assert lib.j_batch_execute(batch)
     run.start_timer()
