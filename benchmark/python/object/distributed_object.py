@@ -109,12 +109,12 @@ def _benchmark_distributed_object_status(run, use_batch):
     lib.j_distribution_unref(distribution)
     
 def benchmark_distributed_object_read(run):
-    _benchmark_distributed_object_read(run, False)
+    _benchmark_distributed_object_read(run, False, 4 * 1024)
 
 def benchmark_distributed_object_read_batch(run):
-    _benchmark_distributed_object_read(run, True)
+    _benchmark_distributed_object_read(run, True, 4 * 1024)
 
-def _benchmark_distributed_object_read(run, use_batch):
+def _benchmark_distributed_object_read(run, use_batch, block_size):
     # TODO: implement _benchmark_distributed_object_read
     return
 
