@@ -1,11 +1,7 @@
 from benchmarkrun import BenchmarkRun, append_to_benchmark_list_and_run
-# FIX: comment in import
-# from julea import lib, encode, ffi
+from julea import lib, encode, ffi
 
 def benchmark_kv(benchmarkrun_list, iterations):
-    # FIX: remove debug output
-    print("benchmark_kv called")
-    return
     append_to_benchmark_list_and_run(benchmarkrun_list, BenchmarkRun("/kv/put", iterations), benchmark_kv_put)
     append_to_benchmark_list_and_run(benchmarkrun_list, BenchmarkRun("/kv/put_batch", iterations), benchmark_kv_put_batch)
     append_to_benchmark_list_and_run(benchmarkrun_list, BenchmarkRun("/kv/get", iterations), benchmark_kv_get)
