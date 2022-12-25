@@ -28,4 +28,4 @@ if __name__ == "__main__":
     #benchmark_collection(runs, iterations)
     #benchmark_item(runs, iterations)
     for run in runs:
-        print(f"run {run.name} took {run.get_runtime} with {run.get_runtime/run.iterations} per iteration")
+        print(f"run {run.name} took {run.get_runtime_s()} s with {run.get_runtime_ms()/run.iterations} ms per iteration")
