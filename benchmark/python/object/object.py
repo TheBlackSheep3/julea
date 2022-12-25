@@ -31,7 +31,7 @@ def _benchmark_object_create(run, use_batch):
         namespace = encode("benchmark")
         obj = lib.j_object_new(namespace, name)
         lib.j_object_create(obj, batch)
-        lib.j_object_delte(obj, deletebatch)
+        lib.j_object_delete(obj, deletebatch)
         if not use_batch:
             assert lib.j_batch_execute(batch)
         lib.j_object_unref(obj)
@@ -177,7 +177,7 @@ def _benchmark_object_unordered_create_delete(run, use_batch):
         namespace = encode("benchmark")
         obj = lib.j_object_new(namespace, name)
         lib.j_object_create(obj, batch)
-        lib.j_object_delte(obj, batch)
+        lib.j_object_delete(obj, batch)
         if not use_batch:
             assert lib.j_batch_execute(batch)
         lib.j_object_unref(obj)
