@@ -31,11 +31,11 @@ def _benchmark_distributed_object_create(run, use_batch):
     deletebatch = lib.j_batch_new_for_template(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
     run.start_timer()
     for i in range(run.iterations):
-        name = f"benchmark-{i}"
-        obj = lib.j_distributed_object_new(encode("benchmark"), encode(name),
-                                           distribution)
+        name = encode(f"benchmark-{i}")
+        namespace = encode("benchmark")
+        obj = lib.j_distributed_object_new(namespace, name, distribution)
         lib.j_distributed_object_create(obj, batch)
-        lib.j_distributed_object_delte(obj, deletebatch)
+        lib.j_distributed_object_delete(obj, deletebatch)
         if not use_batch:
             assert lib.j_batch_execute(batch)
         lib.j_distributed_object_unref(obj)
@@ -57,17 +57,17 @@ def _benchmark_distributed_object_delete(run, use_batch):
     distribution = lib.j_distribution_new(lib.J_DISTRIBUTION_ROUND_ROBIN)
     batch = lib.j_batch_new_for_template(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
     for i in range(run.iterations):
-        name = f"benchmark-{i}"
-        obj = lib.j_distributed_object_new(encode("benchmark"), encode(name),
-                                           distribution)
+        name = encode(f"benchmark-{i}")
+        namespace = encode("benchmark")
+        obj = lib.j_distributed_object_new(namespace, name, distribution)
         lib.j_distributed_object_create(obj, batch)
         lib.j_distributed_object_unref(obj)
     assert lib.j_batch_execute(batch)
     run.start_timer()
     for i in range(run.iterations):
-        name = f"benchmark-{i}"
-        obj = lib.j_distributed_object_new(encode("benchmark"), encode(name),
-                                           distribution)
+        name = encode(f"benchmark-{i}")
+        namespace = encode("benchmark")
+        obj = lib.j_distributed_object_new(namespace, name, distribution)
         lib.j_distributed_object_delete(obj, batch)
         if not use_batch:
             assert lib.j_batch_execute(batch)
@@ -87,12 +87,13 @@ def benchmark_distributed_object_status_batch(run):
 def _benchmark_distributed_object_status(run, use_batch):
     distribution = lib.j_distribution_new(lib.J_DISTRIBUTION_ROUND_ROBIN)
     batch = lib.j_batch_new_for_template(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
-    obj = lib.j_distributed_object_new(encode("benchmark"), encode("benchmark"),
-                                    distribution)
+    name = encode("benchmark")
+    obj = lib.j_distributed_object_new(name, name, distribution)
     lib.j_distributed_object_create(obj, batch)
     size_ptr = ffi.new("unsigned long*")
     modification_time_ptr = ffi.new("long*")
-    lib.j_distributed_object_write(obj, encode("A"), 1, 0, size_ptr, batch)
+    character = encode("A")
+    lib.j_distributed_object_write(obj, character, 1, 0, size_ptr, batch)
     assert lib.j_batch_execute(batch)
     run.start_timer()
     for i in range(run.iterations):
@@ -115,18 +116,66 @@ def benchmark_distributed_object_read_batch(run):
     _benchmark_distributed_object_read(run, True, 4 * 1024)
 
 def _benchmark_distributed_object_read(run, use_batch, block_size):
-    # TODO: implement _benchmark_distributed_object_read
-    return
+    distribution = lib.j_distribution_new(lib.J_DISTRIBUTION_ROUND_ROBIN)
+    batch = lib.j_batch_new_for_template(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
+    name = encode("benchmark")
+    obj = lib.j_distributed_object_new(name, name, distribution)
+    dummy = ffi.new("char[]", block_size)
+    size_ptr = ffi.new("unsigned log*")
+    lib.j_distributed_object_create(obj, batch)
+    for i in range(run.iterations):
+        lib.j_distributed_object_write(obj, dummy, block_size, i*block_size,
+                                       size_ptr, batch)
+    assert lib.j_batch_execute(batch)
+    assert size_ptr[0] == run.iterations * block_size
+    run.start_timer()
+    for i in range(run.iterations):
+        lib.j_distributed_object_read(obj, dummy, block_size, i * block_size,
+                                      size_ptr, batch)
+        if not use_batch:
+            assert lib.j_batch_execute(batch)
+            assert size_ptr[0] == block_size
+    if use_batch:
+        lib.j_batch_execute(batch)
+        assert lib.j_batch_execute(batch)
+        assert size_ptr[0] == block_size
+    run.stop_timer()
+    lib.j_distributed_object_delete(obj, batch)
+    assert lib.j_batch_execute(batch)
+    lib.j_distribution_unref(distribution)
+    lib.j_batch_unref(batch)
+    lib.j_distributed_object_unref(obj)
 
 def benchmark_distributed_object_write(run):
-    _benchmark_distributed_object_write(run, False)
+    _benchmark_distributed_object_write(run, False, 4 * 1024)
 
 def benchmark_distributed_object_write_batch(run):
-    _benchmark_distributed_object_write(run, True)
+    _benchmark_distributed_object_write(run, True, 4 * 1024)
 
-def _benchmark_distributed_object_write(run, use_batch):
-    # TODO: implement _benchmark_distributed_object_write
-    return
+def _benchmark_distributed_object_write(run, use_batch, block_size):
+    distribution = lib.j_distribution_new(lib.J_DISTRIBUTION_ROUND_ROBIN)
+    batch = lib.j_batch_new(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
+    name = encode("benchmark")
+    obj = lib.j_distributed_object_new(name, name, distribution)
+    dummy = ffi.new("char[]", block_size)
+    size_ptr = ffi.new("unsigned long*")
+    assert lib.j_batch_execute(batch)
+    run.start_timer()
+    for i in range(run.iterations):
+        lib.j_distributed_object_write(obj, dummy, block_size, i*block_size,
+                                       size_ptr, batch)
+        if not use_batch:
+            assert lib.j_batch_execute(batch)
+            assert size_ptr[0] == block_size
+    if use_batch:
+        assert lib.j_batch_execute(batch)
+        assert size_ptr[0] == run.iterations * block_size
+    run.stop_timer()
+    lib.j_distributed_object_delete(obj, batch)
+    assert lib.j_batch_execute(batch)
+    lib.j_distributed_object_unref(obj)
+    lib.j_batch_unref(batch)
+    lib.j_distribution_unref(distribution)
 
 def benchmark_distributed_object_unordered_create_delete(run):
     _benchmark_distributed_object_unordered_create_delete(run, False)
@@ -136,4 +185,20 @@ def benchmark_distributed_object_unordered_create_delete_batch(run):
 
 def _benchmark_distributed_object_unordered_create_delete(run, use_batch):
     # TODO: implement _benchmark_distributed_object_unordered_create_delete
-    return
+    distribution = lib.j_distribution_new(lib.J_DISTRIBUTION_ROUND_ROBIN)
+    batch = lib.j_batch_new(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
+    run.start_timer()
+    for i in range(run.iterations):
+        namespace = encode("benchmark")
+        name = encode(f"benchmark-{i}")
+        obj = lib.j_distributed_object_new(namespace, name, distribution)
+        lib.j_distributed_object_create(obj, batch)
+        lib.j_distributed_object_delete(obj, batch)
+        if not use_batch:
+            assert lib.j_batch_execute(batch)
+        lib.j_distributed_object_delete(obj)
+    if use_batch:
+        assert lib.j_batch_execute(batch)
+    run.stop_timer()
+    lib.j_batch_unref(batch)
+    lib.j_distribution_unref(distribution)
