@@ -1,4 +1,4 @@
-from time import perf_counter
+from time import perf_counter_ns
 
 class BenchmarkRun:
     def __init__(self, name, iterations):
@@ -10,13 +10,21 @@ class BenchmarkRun:
 
     def start_timer(self):
         self.timer_started = True
-        self.start = perf_counter()
+        self.start = perf_counter_ns()
 
     def stop_timer(self):
         self.timer_started = False
-        self.stop = perf_counter()
+        self.stop = perf_counter_ns()
 
-    def get_runtime(self):
+    def get_runtime_ms(self):
+        val = self.get_runtime_ns()
+        return val / 1000000 if val != None else None
+
+    def get_runtime_s(self):
+        val = self.get_runtime_ns()
+        return val / 1000000000 if val != None else None
+
+    def get_runtime_ns(self):
         if self.timer_started or self.stop == None:
             return None
         else:
