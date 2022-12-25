@@ -117,7 +117,7 @@ def _benchmark_distributed_object_read(run, use_batch, block_size):
     name = encode("benchmark")
     obj = lib.j_distributed_object_new(name, name, distribution)
     dummy = ffi.new("char[]", block_size)
-    size_ptr = ffi.new("unsigned log*")
+    size_ptr = ffi.new("unsigned long*")
     lib.j_distributed_object_create(obj, batch)
     for i in range(run.iterations):
         lib.j_distributed_object_write(obj, dummy, block_size, i*block_size,
