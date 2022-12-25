@@ -1,11 +1,7 @@
 from benchmarkrun import BenchmarkRun, append_to_benchmark_list_and_run
-# FIX: comment in import
-# from julea import lib, encode, ffi
+from julea import lib, encode, ffi
 
 def benchmark_distributed_object(benchmarkrun_list, iterations):
-    # FIX: remove debug output
-    print("benchmark_distributed_object called")
-    return
     append_to_benchmark_list_and_run(benchmarkrun_list, BenchmarkRun("/object/distributed_object/create", iterations), benchmark_distributed_object_create);
     append_to_benchmark_list_and_run(benchmarkrun_list, BenchmarkRun("/object/distributed_object/create-batch", iterations), benchmark_distributed_object_create_batch);
     append_to_benchmark_list_and_run(benchmarkrun_list, BenchmarkRun("/object/distributed_object/delete", iterations), benchmark_distributed_object_delete);
