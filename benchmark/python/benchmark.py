@@ -15,9 +15,9 @@ if __name__ == "__main__":
     benchmark_kv(runs, iterations)
 
     # Object Client
-    benchmark_distributed_object(runs, iterations)
     # FIXME: comment in other benchmark calls
-    #benchmark_object(runs, iterations)
+    #benchmark_distributed_object(runs, iterations)
+    benchmark_object(runs, iterations)
 
     # DB Client
     #benchmark_db_entry(runs, iterations)
