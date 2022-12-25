@@ -4,6 +4,9 @@ class BenchmarkRun:
     def __init__(self, name, iterations):
         self.name = name
         self.iterations = iterations
+        self.timer_started = False
+        self.start = None
+        self.stop = None
 
     def start_timer(self):
         self.timer_started = True
@@ -14,7 +17,7 @@ class BenchmarkRun:
         self.stop = perf_counter()
 
     def get_runtime(self):
-        if not self.timer_started or self.stop == None:
+        if self.timer_started or self.stop == None:
             return None
         else:
             return self.stop - self.start
