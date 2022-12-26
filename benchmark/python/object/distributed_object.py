@@ -2,18 +2,18 @@ from benchmarkrun import BenchmarkRun, append_to_benchmark_list_and_run
 from julea import lib, encode, ffi
 
 def benchmark_distributed_object(benchmarkrun_list, iterations):
-    append_to_benchmark_list_and_run(benchmarkrun_list, BenchmarkRun("/object/distributed_object/create", iterations), benchmark_distributed_object_create);
-    append_to_benchmark_list_and_run(benchmarkrun_list, BenchmarkRun("/object/distributed_object/create-batch", iterations), benchmark_distributed_object_create_batch);
-    append_to_benchmark_list_and_run(benchmarkrun_list, BenchmarkRun("/object/distributed_object/delete", iterations), benchmark_distributed_object_delete);
-    append_to_benchmark_list_and_run(benchmarkrun_list, BenchmarkRun("/object/distributed_object/delete-batch", iterations), benchmark_distributed_object_delete_batch);
-    append_to_benchmark_list_and_run(benchmarkrun_list, BenchmarkRun("/object/distributed_object/status", iterations), benchmark_distributed_object_status);
-    append_to_benchmark_list_and_run(benchmarkrun_list, BenchmarkRun("/object/distributed_object/status-batch", iterations), benchmark_distributed_object_status_batch);
-    append_to_benchmark_list_and_run(benchmarkrun_list, BenchmarkRun("/object/distributed_object/read", iterations), benchmark_distributed_object_read);
-    append_to_benchmark_list_and_run(benchmarkrun_list, BenchmarkRun("/object/distributed_object/read-batch", iterations), benchmark_distributed_object_read_batch);
-    append_to_benchmark_list_and_run(benchmarkrun_list, BenchmarkRun("/object/distributed_object/write", iterations), benchmark_distributed_object_write);
-    append_to_benchmark_list_and_run(benchmarkrun_list, BenchmarkRun("/object/distributed_object/write-batch", iterations), benchmark_distributed_object_write_batch);
-    append_to_benchmark_list_and_run(benchmarkrun_list, BenchmarkRun("/object/distributed_object/unordered-create-delete", iterations), benchmark_distributed_object_unordered_create_delete);
-    append_to_benchmark_list_and_run(benchmarkrun_list, BenchmarkRun("/object/distributed_object/unordered-create-delete-batch", iterations), benchmark_distributed_object_unordered_create_delete_batch);
+    append_to_benchmark_list_and_run(benchmarkrun_list, BenchmarkRun("/object/distributed_object/create", iterations), benchmark_distributed_object_create)
+    append_to_benchmark_list_and_run(benchmarkrun_list, BenchmarkRun("/object/distributed_object/create-batch", iterations), benchmark_distributed_object_create_batch)
+    append_to_benchmark_list_and_run(benchmarkrun_list, BenchmarkRun("/object/distributed_object/delete", iterations), benchmark_distributed_object_delete)
+    append_to_benchmark_list_and_run(benchmarkrun_list, BenchmarkRun("/object/distributed_object/delete-batch", iterations), benchmark_distributed_object_delete_batch)
+    append_to_benchmark_list_and_run(benchmarkrun_list, BenchmarkRun("/object/distributed_object/status", iterations), benchmark_distributed_object_status)
+    append_to_benchmark_list_and_run(benchmarkrun_list, BenchmarkRun("/object/distributed_object/status-batch", iterations), benchmark_distributed_object_status_batch)
+    append_to_benchmark_list_and_run(benchmarkrun_list, BenchmarkRun("/object/distributed_object/read", iterations), benchmark_distributed_object_read)
+    append_to_benchmark_list_and_run(benchmarkrun_list, BenchmarkRun("/object/distributed_object/read-batch", iterations), benchmark_distributed_object_read_batch)
+    append_to_benchmark_list_and_run(benchmarkrun_list, BenchmarkRun("/object/distributed_object/write", iterations), benchmark_distributed_object_write)
+    append_to_benchmark_list_and_run(benchmarkrun_list, BenchmarkRun("/object/distributed_object/write-batch", iterations), benchmark_distributed_object_write_batch)
+    append_to_benchmark_list_and_run(benchmarkrun_list, BenchmarkRun("/object/distributed_object/unordered-create-delete", iterations), benchmark_distributed_object_unordered_create_delete)
+    append_to_benchmark_list_and_run(benchmarkrun_list, BenchmarkRun("/object/distributed_object/unordered-create-delete-batch", iterations), benchmark_distributed_object_unordered_create_delete_batch)
 
 def benchmark_distributed_object_create(run):
     _benchmark_distributed_object_create(run, False)
@@ -133,6 +133,7 @@ def _benchmark_distributed_object_read(run, use_batch, block_size):
             assert size_ptr[0] == block_size
     if use_batch:
         lib.j_batch_execute(batch)
+        # FIXME: assertion fails when running benchmark
         assert lib.j_batch_execute(batch)
         assert size_ptr[0] == block_size
     run.stop_timer()
