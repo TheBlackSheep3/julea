@@ -67,6 +67,10 @@ def _benchmark_db_insert_index_mixed(run, use_batch):
     # TODO: implement _benchmark_db_insert_index_mixed
     return
 
+# FIXME: write one method for insert, one for delete and one for update
+# don't forget common db to make iterator easier to write
+def _benchmark_db_insert(
+
 def benchmark_db_delete(run):
     _benchmark_db_delete(run, False)
 
