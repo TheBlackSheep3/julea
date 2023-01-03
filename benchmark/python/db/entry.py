@@ -104,7 +104,7 @@ def _benchmark_db_delete(run, namespace, use_batch, use_index_all,
     assert run != None
     _benchmark_db_insert(None, b_scheme, "\0", True, False, False, False)
     run.start_timer()
-    iterations = N if use_index_all or use_index_single else N / N_GET_DIVIDER
+    iterations = N if use_index_all or use_index_single else (N / N_GET_DIVIDER)
     for i in range(iterations):
         entry = lib.j_db_entry_new(b_scheme, b_s_error_ptr)
         string = encode(_benchmark_db_get_identifier(i))
@@ -172,7 +172,7 @@ def _benchmark_db_update(run, namespace, use_batch, use_index_all,
     assert run != None
     _benchmark_db_insert(None, b_scheme, "\0", True, False, False, False)
     run.start_timer()
-    iterations = N if use_index_all or use_index_single else N / N_GET_DIVIDER
+    iterations = N if use_index_all or use_index_single else (N / N_GET_DIVIDER)
     for i in range(iterations):
         sint_name = "sint"
         i_signed_ptr = ffi.new("long*")
