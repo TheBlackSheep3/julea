@@ -1,6 +1,8 @@
 from benchmarkrun import BenchmarkRun, append_to_benchmark_list_and_run
 from julea import lib, encode, ffi
-from db.common import _benchmark_db_insert
+from db.common import _benchmark_db_insert, _benchmark_db_prepare_scheme,
+_benchmark_db_get_identifier, N, N_GET_DIVIDER, N_PRIME, SIGNED_FACTOR,
+CLASS_MODULUS, CLASS_LIMIT
 
 def benchmark_db_entry(benchmarkrun_list, iterations):
 	append_to_benchmark_list_and_run(benchmarkrun_list, BenchmarkRun("/db/entry/insert", iterations), benchmark_db_insert)
@@ -90,9 +92,42 @@ def benchmark_db_delete_batch_index_mixed(run):
 
 def _benchmark_db_delete(run, namespace, use_batch, use_index_all,
                          use_index_single):
-    # TODO: implement _benchmark_db_delete
     namespace_encoded = encode(namespace)
-    return
+    b_s_error_ptr = ffi.new("GError*")
+    b_s_error_ptr[0] = ffi.NULL
+    batch = lib.j_batch_new_for_template(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
+    delete_batch = lib.j_batch_new_for_template(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
+    b_scheme = _benchmark_db_prepare_scheme(namespace_encoded, False,
+                                            use_index_all, use_index_single,
+                                            batch, delete_batch)
+    assert b_scheme != ffi.NULL
+    assert run != None
+    _benchmark_db_insert(None, b_scheme, "\0", True, False, False, False)
+    run.start_timer()
+    iterations = N if use_index_all or use_index_single else N / N_GET_DIVIDER
+    for i in range(iterations):
+        entry = lib.j_db_entry_new(b_scheme, b_s_error_ptr)
+        string = encode(_benchmark_db_get_identifier(i))
+        string_name = encode("string")
+        selector = lib.j_db_selector_new(b_scheme, lib.J_DB_SELECTOR_MODE_AND,
+                                         b_s_error_ptr)
+        assert lib.j_db_selector_add_field(selector, string_name,
+                                           J_DB_SELECTOR_OPERATOR_EQ, string, 0,
+                                           b_s_error_ptr)
+        assert b_s_error_ptr[0] == ffi.NULL
+        assert lib.j_db_entry_delete(entry, selector, batch, b_s_error_ptr)
+        assert b_s_error_ptr[0] == ffi.NULL
+        if not use_batch:
+            assert lib.j_batch_execute(batch)
+        lib.j_db_entry_unref(entry)
+        lib.j_db_selector_unref(selector)
+    if use_batch:
+            assert lib.j_batch_execute(batch)
+    run.stop_timer()
+    assert lib.j_batch_execute(delete_batch)
+    run.operations = iterations
+    lib.j_batch_unref(batch)
+    lib.j_batch_unref(delete_batch)
 
 def benchmark_db_update(run):
     _benchmark_db_update(run, "benchmark_update", False, False, False)
@@ -124,6 +159,47 @@ def benchmark_db_update_batch_index_mixed(run):
 
 def _benchmark_db_update(run, namespace, use_batch, use_index_all,
                          use_index_single):
-    # TODO: implement _benchmark_db_update
     namespace_encoded = encode(namespace)
-    return
+    b_s_error_ptr = ffi.new("GError*")
+    b_s_error_ptr[0] = ffi.NULL
+    batch = lib.j_batch_new_for_template(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
+    delete_batch = lib.j_batch_new_for_template(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
+    b_scheme = _benchmark_db_prepare_scheme(namespace_encoded, False,
+                                            use_index_all, use_index_single,
+                                            batch, delete_batch)
+    assert b_scheme != ffi.NULL
+    assert run != None
+    _benchmark_db_insert(None, b_scheme, "\0", True, False, False, False)
+    run.start_timer()
+    iterations = N if use_index_all or use_index_single else N / N_GET_DIVIDER
+    for i in range(iterations):
+        sint_name = "sint"
+        i_signed_ptr = ffi.new("long*")
+        i_signed_ptr[0] = (((i + N_PRIME) * SIGNED_FACTOR) & CLASS_MODULUS) -
+                           CLASS_LIMIT
+        selector = lib.j_db_selector_new(b_scheme, lib.J_DB_SELECTOR_MODE_AND,
+                                         b_s_error_ptr)
+        entry = lib.j_db_entry_new(b_scheme, b_s_error_ptr)
+        string_name = "string"
+        string = encode(_benchmark_db_get_identifier(i))
+        assert b_s_error_ptr[0] == ffi.NULL
+        assert lib.j_db_entry_set_field(encode, sint_name, i_signed_ptr, 0,
+                                        b_s_error_ptr)
+        assert b_s_error_ptr[0] == ffi.NULL
+        assert lib.j_db_selector_add_field(selector, string_name,
+                                           lib.J_DB_SELECTOR_OPERATOR_EQ,
+                                           string, 0, b_s_error_ptr)
+        assert b_s_error_ptr[0] == ffi.NULL
+        assert lib.j_db_entry_update(entry, selector, batch, b_s_error_ptr)
+        assert b_s_error_ptr[0] == ffi.NULL
+        if not use_batch:
+            assert lib.j_batch_execute(batch)
+        lib.j_db_selector_unref(selector)
+        lib.j_db_entry_unref(entry)
+    if use_batch:
+        assert lib.j_batch_execute(batch)
+    run.stop_timer()
+    assert lib.j_batch_execute(delete_batch)
+    run.operations = iterations
+    lib.j_batch_unref(batch)
+    lib.j_batch_unref(delete_batch)
