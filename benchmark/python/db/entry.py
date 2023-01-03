@@ -128,6 +128,7 @@ def _benchmark_db_delete(run, namespace, use_batch, use_index_all,
     run.operations = iterations
     lib.j_batch_unref(batch)
     lib.j_batch_unref(delete_batch)
+    lib.j_db_schema_unref(b_scheme)
 
 def benchmark_db_update(run):
     _benchmark_db_update(run, "benchmark_update", False, False, False)
@@ -203,3 +204,4 @@ def _benchmark_db_update(run, namespace, use_batch, use_index_all,
     run.operations = iterations
     lib.j_batch_unref(batch)
     lib.j_batch_unref(delete_batch)
+    lib.j_db_schema_unref(b_scheme)

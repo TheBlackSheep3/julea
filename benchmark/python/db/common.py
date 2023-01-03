@@ -130,7 +130,6 @@ def _benchmark_db_insert(run, scheme, namespace, use_batch, use_index_all,
         run.stop_timer()
         assert lib.j_batch_execute(delete_batch)
         run.operations = N
-    # WARN: remember to unref everything created with new
     lib.j_batch_unref(batch)
     lib.j_batch_unref(delete_batch)
     lib.j_db_entry_unref(entry)
