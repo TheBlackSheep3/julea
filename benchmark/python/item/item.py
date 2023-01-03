@@ -79,4 +79,5 @@ def benchmark_item_unordered_create_delete_batch(run):
 
 def _benchmark_item_unordered_create_delete(run, use_batch):
     # TODO: implement _benchmark_item_unordered_create_delete
+    run.operations = run.iterations * 2
     return

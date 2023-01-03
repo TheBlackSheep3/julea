@@ -181,7 +181,6 @@ def benchmark_distributed_object_unordered_create_delete_batch(run):
     _benchmark_distributed_object_unordered_create_delete(run, True)
 
 def _benchmark_distributed_object_unordered_create_delete(run, use_batch):
-    # TODO: implement _benchmark_distributed_object_unordered_create_delete
     distribution = lib.j_distribution_new(lib.J_DISTRIBUTION_ROUND_ROBIN)
     batch = lib.j_batch_new(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
     run.start_timer()
@@ -199,3 +198,4 @@ def _benchmark_distributed_object_unordered_create_delete(run, use_batch):
     run.stop_timer()
     lib.j_batch_unref(batch)
     lib.j_distribution_unref(distribution)
+    run.operations = run.iterations * 2

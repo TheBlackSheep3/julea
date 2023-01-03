@@ -7,6 +7,7 @@ class BenchmarkRun:
         self.timer_started = False
         self.start = None
         self.stop = None
+        self.operations = iterations
 
     def start_timer(self):
         self.timer_started = True

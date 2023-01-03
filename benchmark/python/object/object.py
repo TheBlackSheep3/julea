@@ -185,3 +185,4 @@ def _benchmark_object_unordered_create_delete(run, use_batch):
         assert lib.j_batch_execute(batch)
     run.stop_timer()
     lib.j_batch_unref(batch)
+    run.operations = run.iterations * 2

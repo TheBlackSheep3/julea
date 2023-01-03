@@ -124,3 +124,4 @@ def _benchmark_kv_unordered_put_delete(run, use_batch):
         assert lib.j_batch_execute(batch)
     run.stop_timer()
     lib.j_batch_unref(batch)
+    run.operations = run.iterations * 2
