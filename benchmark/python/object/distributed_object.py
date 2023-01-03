@@ -132,8 +132,6 @@ def _benchmark_distributed_object_read(run, use_batch, block_size):
             assert lib.j_batch_execute(batch)
             assert size_ptr[0] == block_size
     if use_batch:
-        lib.j_batch_execute(batch)
-        # FIXME: assertion fails when running benchmark
         assert lib.j_batch_execute(batch)
         assert size_ptr[0] == block_size
     run.stop_timer()
