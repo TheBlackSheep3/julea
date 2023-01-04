@@ -26,8 +26,8 @@ def _benchmark_db_schema_create(run, use_batch):
             fname = encode("field{j}")
             lib.j_db_schema_add_field(schema, fname, lib.J_DB_TYPE_STRING,
                                       error_ptr)
-        j_db_schema_create(schema, batch, ffi.NULL)
-        j_db_schema_delete(schema, delete_batch, ffi.NULL)
+        lib.j_db_schema_create(schema, batch, ffi.NULL)
+        lib.j_db_schema_delete(schema, delete_batch, ffi.NULL)
         if not use_batch:
             assert lib.j_batch_execute(batch)
         lib.j_db_schema_unref(schema)

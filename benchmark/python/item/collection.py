@@ -54,12 +54,12 @@ def _benchmark_collection_delete(run, use_batch):
         collection_ptr = ffi.new("JCollection**")
         name = encode(f"benchmark-{i}")
         lib.j_collection_get(collection_ptr, name, batch)
-        assert j_batch_execute(batch)
+        assert lib.j_batch_execute(batch)
         lib.j_collection_delete(collection[0], batch)
         if not use_batch:
-            assert j_batch_execute(batch)
+            assert lib.j_batch_execute(batch)
     if use_batch:
-        assert j_batch_execute(batch)
+        assert lib.j_batch_execute(batch)
     run.stop_timer()
     lib.j_batch_unref(batch)
 

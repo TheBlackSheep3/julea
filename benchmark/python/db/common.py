@@ -68,7 +68,7 @@ def _benchmark_db_prepare_scheme(namespace_encoded, use_batch, use_index_all,
     assert b_s_error_ptr[0] == ffi.NULL
     if not use_batch:
         assert lib.j_batch_execute(batch)
-    return j_db_schema_ref(b_scheme)
+    return lib.j_db_schema_ref(b_scheme)
 
 def _benchmark_db_get_identifier(i):
     return f"{i * SIGNED_FACTOR % N_MODULUS:x}-benchmark-{i}"
