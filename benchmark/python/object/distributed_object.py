@@ -149,7 +149,7 @@ def benchmark_distributed_object_write_batch(run):
 
 def _benchmark_distributed_object_write(run, use_batch, block_size):
     distribution = lib.j_distribution_new(lib.J_DISTRIBUTION_ROUND_ROBIN)
-    batch = lib.j_batch_new(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
+    batch = lib.j_batch_new_for_template(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
     name = encode("benchmark")
     obj = lib.j_distributed_object_new(name, name, distribution)
     dummy = ffi.new("char[]", block_size)
@@ -180,7 +180,7 @@ def benchmark_distributed_object_unordered_create_delete_batch(run):
 
 def _benchmark_distributed_object_unordered_create_delete(run, use_batch):
     distribution = lib.j_distribution_new(lib.J_DISTRIBUTION_ROUND_ROBIN)
-    batch = lib.j_batch_new(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
+    batch = lib.j_batch_new_for_template(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
     run.start_timer()
     for i in range(run.iterations):
         namespace = encode("benchmark")
