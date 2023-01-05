@@ -152,6 +152,7 @@ def _benchmark_distributed_object_write(run, use_batch, block_size):
     batch = lib.j_batch_new_for_template(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
     name = encode("benchmark")
     obj = lib.j_distributed_object_new(name, name, distribution)
+    lib.j_distributed_object_create(obj, batch)
     dummy = ffi.new("char[]", block_size)
     size_ptr = ffi.new("unsigned long*")
     assert lib.j_batch_execute(batch)
