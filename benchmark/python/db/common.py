@@ -1,4 +1,4 @@
-from julea import lib, encode, ffi, encoding
+from julea import lib, encode, ffi
 
 N = 1 << 12
 N_GET_DIVIDER = N >> 8
@@ -39,27 +39,27 @@ def _benchmark_db_prepare_scheme(namespace_encoded, use_batch, use_index_all,
                                      b_s_error_ptr)
     assert b_s_error_ptr == ffi.NULL
     if use_index_all:
-        names = ffi.new("char[][]")
-        names[0] = "string".encode(encoding)
-        names[1] = "float".encode(encoding)
-        names[2] = "uint".encode(encoding)
-        names[3] = "sint".encode(encoding)
-        names[4] = "\0".encode(encoding)
+        names = ffi.new("char*[5]")
+        names[0] = encode("string")
+        names[1] = encode("float")
+        names[2] = encode("uint")
+        names[3] = encode("sint")
+        names[4] = ffi.NULL
         assert lib.j_db_schema_add_index(b_scheme, names, b_s_error_ptr)
         assert b_s_error_ptr == ffi.NULL
     if use_index_single:
-        names = ffi.new("char[][]")
-        names[1] = "\0".encode(encoding)
-        names[0] = "string".encode(encoding)
+        names = ffi.new("char*[2]")
+        names[1] = ffi.NULL
+        names[0] = encode("string")
         assert lib.j_db_schema_add_index(b_scheme, names, b_s_error_ptr)
         assert b_s_error_ptr == ffi.NULL
-        names[0] = "float".encode(encoding)
+        names[0] = encode("float")
         assert lib.j_db_schema_add_index(b_scheme, names, b_s_error_ptr)
         assert b_s_error_ptr == ffi.NULL
-        names[0] = "uint".encode(encoding)
+        names[0] = encode("uint")
         assert lib.j_db_schema_add_index(b_scheme, names, b_s_error_ptr)
         assert b_s_error_ptr == ffi.NULL
-        names[0] = "sint".encode(encoding)
+        names[0] = encode("sint")
         assert lib.j_db_schema_add_index(b_scheme, names, b_s_error_ptr)
         assert b_s_error_ptr == ffi.NULL
     assert lib.j_db_schema_create(b_scheme, batch, b_s_error_ptr)
