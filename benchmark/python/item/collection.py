@@ -55,7 +55,7 @@ def _benchmark_collection_delete(run, use_batch):
         name = encode(f"benchmark-{i}")
         lib.j_collection_get(collection_ptr, name, batch)
         assert lib.j_batch_execute(batch)
-        lib.j_collection_delete(collection[0], batch)
+        lib.j_collection_delete(collection_ptr[0], batch)
         if not use_batch:
             assert lib.j_batch_execute(batch)
     if use_batch:
