@@ -1,7 +1,6 @@
 from benchmarkrun import BenchmarkRun, append_to_benchmark_list_and_run
 from julea import lib, encode, ffi
-from db.common import _benchmark_db_prepare_scheme, _benchmark_db_insert,
-_benchmark_db_get_identifier, N, N_GET_DIVIDER, CLASS_MODULUS, CLASS_LIMIT
+from db.common import _benchmark_db_prepare_scheme, _benchmark_db_insert, _benchmark_db_get_identifier, N, N_GET_DIVIDER, CLASS_MODULUS, CLASS_LIMIT
 
 def benchmark_db_iterator(benchmarkrun_list, iterations):
 	append_to_benchmark_list_and_run(benchmarkrun_list, BenchmarkRun("/db/iterator/get-simple", iterations), benchmark_db_get_simple)
