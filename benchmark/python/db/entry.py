@@ -110,8 +110,8 @@ def _benchmark_db_delete(run, namespace, use_batch, use_index_all,
         selector = lib.j_db_selector_new(b_scheme, lib.J_DB_SELECTOR_MODE_AND,
                                          b_s_error_ptr)
         assert lib.j_db_selector_add_field(selector, string_name,
-                                           J_DB_SELECTOR_OPERATOR_EQ, string, 0,
-                                           b_s_error_ptr)
+                                           lib.J_DB_SELECTOR_OPERATOR_EQ,
+                                           string, 0, b_s_error_ptr)
         assert b_s_error_ptr == ffi.NULL
         assert lib.j_db_entry_delete(entry, selector, batch, b_s_error_ptr)
         assert b_s_error_ptr == ffi.NULL
