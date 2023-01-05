@@ -54,7 +54,7 @@ def _benchmark_db_get_simple(run, namespace, use_index_all, use_index_single):
         iterator = lib.j_db_iterator_new(b_scheme, selector, b_s_error_ptr)
         assert iterator != ffi.NULL
         assert b_s_error_ptr == ffi.NULL
-        assert lib.j_db_iterator_next(b_scheme, selector, b_s_error_ptr)
+        assert lib.j_db_iterator_next(iterator, b_s_error_ptr)
         assert b_s_error_ptr == ffi.NULL
         assert lib.j_db_iterator_get_field(iterator, string_name, field_type_ptr,
                                        field_value_ptr, field_length_ptr,
