@@ -13,7 +13,7 @@ FLOAT_FACTOR = 3.1415926
 def _benchmark_db_prepare_scheme(namespace_encoded, use_batch, use_index_all,
                                  use_index_single, batch, delete_batch):
     b_s_error_ptr = ffi.new("GError*")
-    b_s_error_ptr[0] = ffi.NULL
+    b_s_error_ptr = ffi.NULL
     table_name = encode("table")
     string_name = encode("string")
     float_name = encode("float")
@@ -22,22 +22,22 @@ def _benchmark_db_prepare_scheme(namespace_encoded, use_batch, use_index_all,
     blob_name = encode("blob")
     b_scheme = lib.j_db_schema_new(namespace_encoded, table_name, b_s_error_ptr)
     assert b_scheme != ffi.NULL
-    assert b_s_error_ptr[0] == ffi.NULL
+    assert b_s_error_ptr == ffi.NULL
     assert lib.j_db_schema_add_field(b_scheme, string_name,
                                      lib.J_DB_TYPE_STRING, b_s_error_ptr)
-    assert b_s_error_ptr[0] == ffi.NULL
+    assert b_s_error_ptr == ffi.NULL
     assert lib.j_db_schema_add_field(b_scheme, float_name,
                                      lib.J_DB_TYPE_FLOAT64, b_s_error_ptr)
-    assert b_s_error_ptr[0] == ffi.NULL
+    assert b_s_error_ptr == ffi.NULL
     assert lib.j_db_schema_add_field(b_scheme, uint_name, lib.J_DB_TYPE_UINT64,
                                      b_s_error_ptr)
-    assert b_s_error_ptr[0] == ffi.NULL
+    assert b_s_error_ptr == ffi.NULL
     assert lib.j_db_schema_add_field(b_scheme, sint_name, lib.J_DB_TYPE_UINT64,
                                      b_s_error_ptr)
-    assert b_s_error_ptr[0] == ffi.NULL
+    assert b_s_error_ptr == ffi.NULL
     assert lib.j_db_schema_add_field(b_scheme, blob_name, lib.J_DB_TYPE_BLOB,
                                      b_s_error_ptr)
-    assert b_s_error_ptr[0] == ffi.NULL
+    assert b_s_error_ptr == ffi.NULL
     if use_index_all:
         names = ffi.new("char[][]")
         names[0] = "string".encode(encoding)
@@ -46,26 +46,26 @@ def _benchmark_db_prepare_scheme(namespace_encoded, use_batch, use_index_all,
         names[3] = "sint".encode(encoding)
         names[4] = "\0".encode(encoding)
         assert lib.j_db_schema_add_index(b_scheme, names, b_s_error_ptr)
-        assert b_s_error_ptr[0] == ffi.NULL
+        assert b_s_error_ptr == ffi.NULL
     if use_index_single:
         names = ffi.new("char[][]")
         names[1] = "\0".encode(encoding)
         names[0] = "string".encode(encoding)
         assert lib.j_db_schema_add_index(b_scheme, names, b_s_error_ptr)
-        assert b_s_error_ptr[0] == ffi.NULL
+        assert b_s_error_ptr == ffi.NULL
         names[0] = "float".encode(encoding)
         assert lib.j_db_schema_add_index(b_scheme, names, b_s_error_ptr)
-        assert b_s_error_ptr[0] == ffi.NULL
+        assert b_s_error_ptr == ffi.NULL
         names[0] = "uint".encode(encoding)
         assert lib.j_db_schema_add_index(b_scheme, names, b_s_error_ptr)
-        assert b_s_error_ptr[0] == ffi.NULL
+        assert b_s_error_ptr == ffi.NULL
         names[0] = "sint".encode(encoding)
         assert lib.j_db_schema_add_index(b_scheme, names, b_s_error_ptr)
-        assert b_s_error_ptr[0] == ffi.NULL
+        assert b_s_error_ptr == ffi.NULL
     assert lib.j_db_schema_create(b_scheme, batch, b_s_error_ptr)
-    assert b_s_error_ptr[0] == ffi.NULL
+    assert b_s_error_ptr == ffi.NULL
     assert lib.j_db_schema_delete(b_scheme, delete_batch, b_s_error_ptr)
-    assert b_s_error_ptr[0] == ffi.NULL
+    assert b_s_error_ptr == ffi.NULL
     if not use_batch:
         assert lib.j_batch_execute(batch)
     return lib.j_db_schema_ref(b_scheme)
@@ -77,7 +77,7 @@ def _benchmark_db_insert(run, scheme, namespace, use_batch, use_index_all,
                          use_index_single, use_timer):
     b_scheme = None
     b_s_error_ptr = ffi.new("GError*")
-    b_s_error_ptr[0] = ffi.NULL
+    b_s_error_ptr = ffi.NULL
     namespace_encoded = encode(namespace)
     batch = lib.j_batch_new_for_template(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
     delete_batch = lib.j_batch_new_for_template(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
@@ -107,21 +107,21 @@ def _benchmark_db_insert(run, scheme, namespace, use_batch, use_index_all,
         sint_name = encode("sint")
         uint_name = encode("uint")
         entry = lib.j_db_entry_new(b_scheme, b_s_error_ptr)
-        assert b_s_error_ptr[0] == ffi.NULL
+        assert b_s_error_ptr == ffi.NULL
         assert lib.j_db_entry_set_field(entry, string_name, string, 0,
                                         b_s_error_ptr)
-        assert b_s_error_ptr[0] == ffi.NULL
+        assert b_s_error_ptr == ffi.NULL
         assert lib.j_db_entry_set_field(entry, float_name, i_float_ptr, 0,
                                         b_s_error_ptr)
-        assert b_s_error_ptr[0] == ffi.NULL
+        assert b_s_error_ptr == ffi.NULL
         assert lib.j_db_entry_set_field(entry, sint_name, i_signed_ptr, 0,
                                         b_s_error_ptr)
-        assert b_s_error_ptr[0] == ffi.NULL
+        assert b_s_error_ptr == ffi.NULL
         assert lib.j_db_entry_set_field(entry, uint_name, i_usigned_ptr, 0,
                                         b_s_error_ptr)
-        assert b_s_error_ptr[0] == ffi.NULL
+        assert b_s_error_ptr == ffi.NULL
         assert lib.j_db_entry_insert(entry, batch, b_s_error_ptr)
-        assert b_s_error_ptr[0] == ffi.NULL
+        assert b_s_error_ptr == ffi.NULL
         if not use_batch:
             assert lib.j_batch_execute(batch)
     if use_batch or not use_timer:

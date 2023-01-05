@@ -28,7 +28,7 @@ def benchmark_db_get_simple_index_mixed(run):
 def _benchmark_db_get_simple(run, namespace, use_index_all, use_index_single):
     namespace_encoded = encode(namespace)
     b_s_error_ptr = ffi.new("GError*")
-    b_s_error_ptr[0] = ffi.NULL
+    b_s_error_ptr = ffi.NULL
     batch = lib.j_batch_new_for_template(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
     delete_batch = lib.j_batch_new_for_template(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
     b_scheme = _benchmark_db_prepare_scheme(namespace_encoded, False,
@@ -50,16 +50,16 @@ def _benchmark_db_get_simple(run, namespace, use_index_all, use_index_single):
         assert lib.j_db_selector_add_field(selector, string_name,
                                            lib.J_DB_SELECTOR_OPERATOR_EQ,
                                            string, 0, b_s_error_ptr)
-        assert b_s_error_ptr[0] == ffi.NULL
+        assert b_s_error_ptr == ffi.NULL
         iterator = lib.j_db_iterator_new(b_scheme, selector, b_s_error_ptr)
         assert iterator != ffi.NULL
-        assert b_s_error_ptr[0] == ffi.NULL
+        assert b_s_error_ptr == ffi.NULL
         assert lib.j_db_iterator_next(b_scheme, selector, b_s_error_ptr)
-        assert b_s_error_ptr[0] == ffi.NULL
+        assert b_s_error_ptr == ffi.NULL
         assert lib.j_db_iterator_get_field(iterator, string_name, field_type_ptr,
                                        field_value_ptr, field_length_ptr,
                                        b_s_error_ptr)
-        assert b_s_error_ptr[0] == ffi.NULL
+        assert b_s_error_ptr == ffi.NULL
         lib.j_db_selector_unref(selector)
         lib.j_db_iterator_unref(iterator)
     run.operations = iterations
@@ -83,7 +83,7 @@ def benchmark_db_get_range_index_mixed(run):
 def _benchmark_db_get_range(run, namespace, use_index_all, use_index_single):
     namespace_encoded = encode(namespace)
     b_s_error_ptr = ffi.new("GError*")
-    b_s_error_ptr[0] = ffi.NULL
+    b_s_error_ptr = ffi.NULL
     batch = lib.j_batch_new_for_template(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
     delete_batch = lib.j_batch_new_for_template(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
     b_scheme = _benchmark_db_prepare_scheme(namespace_encoded, False,
@@ -108,20 +108,20 @@ def _benchmark_db_get_range(run, namespace, use_index_all, use_index_single):
         assert lib.j_db_selector_add_field(selector, sint_name,
                                            lib.J_DB_SELECTOR_OPERATOR_GE,
                                            range_begin_ptr, 0 , b_s_error_ptr)
-        assert b_s_error_ptr[0] == ffi.NULL
+        assert b_s_error_ptr == ffi.NULL
         assert lib.j_db_selector_add_field(selector, sint_name,
                                            lib.J_DB_SELECTOR_OPERATOR_LE,
                                            range_end_ptr, 0, b_s_error_ptr)
-        assert b_s_error_ptr[0] == ffi.NULL
+        assert b_s_error_ptr == ffi.NULL
         iterator = lib.j_db_iterator_new(b_scheme, selector, b_s_error_ptr)
         assert iterator != ffi.NULL
-        assert b_s_error_ptr[0] == ffi.NULL
+        assert b_s_error_ptr == ffi.NULL
         assert lib.j_db_iterator_next(iterator, b_s_error_ptr)
-        assert b_s_error_ptr[0] == ffi.NULL
+        assert b_s_error_ptr == ffi.NULL
         assert lib.j_db_iterator_get_field(iterator, string_name, field_type_ptr,
                                        field_value_ptr, field_length_ptr,
                                        b_s_error_ptr)
-        assert b_s_error_ptr[0] == ffi.NULL
+        assert b_s_error_ptr == ffi.NULL
     run.stop_timer()
     assert lib.j_batch_execute(delete_batch)
     run.operations = N_GET_DIVIDER

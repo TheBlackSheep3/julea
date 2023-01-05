@@ -92,7 +92,7 @@ def _benchmark_db_delete(run, namespace, use_batch, use_index_all,
                          use_index_single):
     namespace_encoded = encode(namespace)
     b_s_error_ptr = ffi.new("GError*")
-    b_s_error_ptr[0] = ffi.NULL
+    b_s_error_ptr = ffi.NULL
     batch = lib.j_batch_new_for_template(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
     delete_batch = lib.j_batch_new_for_template(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
     b_scheme = _benchmark_db_prepare_scheme(namespace_encoded, False,
@@ -112,9 +112,9 @@ def _benchmark_db_delete(run, namespace, use_batch, use_index_all,
         assert lib.j_db_selector_add_field(selector, string_name,
                                            J_DB_SELECTOR_OPERATOR_EQ, string, 0,
                                            b_s_error_ptr)
-        assert b_s_error_ptr[0] == ffi.NULL
+        assert b_s_error_ptr == ffi.NULL
         assert lib.j_db_entry_delete(entry, selector, batch, b_s_error_ptr)
-        assert b_s_error_ptr[0] == ffi.NULL
+        assert b_s_error_ptr == ffi.NULL
         if not use_batch:
             assert lib.j_batch_execute(batch)
         lib.j_db_entry_unref(entry)
@@ -160,7 +160,7 @@ def _benchmark_db_update(run, namespace, use_batch, use_index_all,
                          use_index_single):
     namespace_encoded = encode(namespace)
     b_s_error_ptr = ffi.new("GError*")
-    b_s_error_ptr[0] = ffi.NULL
+    b_s_error_ptr = ffi.NULL
     batch = lib.j_batch_new_for_template(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
     delete_batch = lib.j_batch_new_for_template(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
     b_scheme = _benchmark_db_prepare_scheme(namespace_encoded, False,
@@ -180,16 +180,16 @@ def _benchmark_db_update(run, namespace, use_batch, use_index_all,
         entry = lib.j_db_entry_new(b_scheme, b_s_error_ptr)
         string_name = "string"
         string = encode(_benchmark_db_get_identifier(i))
-        assert b_s_error_ptr[0] == ffi.NULL
+        assert b_s_error_ptr == ffi.NULL
         assert lib.j_db_entry_set_field(encode, sint_name, i_signed_ptr, 0,
                                         b_s_error_ptr)
-        assert b_s_error_ptr[0] == ffi.NULL
+        assert b_s_error_ptr == ffi.NULL
         assert lib.j_db_selector_add_field(selector, string_name,
                                            lib.J_DB_SELECTOR_OPERATOR_EQ,
                                            string, 0, b_s_error_ptr)
-        assert b_s_error_ptr[0] == ffi.NULL
+        assert b_s_error_ptr == ffi.NULL
         assert lib.j_db_entry_update(entry, selector, batch, b_s_error_ptr)
-        assert b_s_error_ptr[0] == ffi.NULL
+        assert b_s_error_ptr == ffi.NULL
         if not use_batch:
             assert lib.j_batch_execute(batch)
         lib.j_db_selector_unref(selector)
