@@ -133,7 +133,7 @@ def _benchmark_distributed_object_read(run, use_batch, block_size):
             assert size_ptr[0] == block_size
     if use_batch:
         assert lib.j_batch_execute(batch)
-        assert size_ptr[0] == block_size
+        assert size_ptr[0] == run.iterations * block_size
     run.stop_timer()
     lib.j_distributed_object_delete(obj, batch)
     assert lib.j_batch_execute(batch)
