@@ -191,7 +191,7 @@ def _benchmark_distributed_object_unordered_create_delete(run, use_batch):
         lib.j_distributed_object_delete(obj, batch)
         if not use_batch:
             assert lib.j_batch_execute(batch)
-        lib.j_distributed_object_delete(obj, batch)
+        lib.j_distributed_object_unref(obj)
     if use_batch:
         assert lib.j_batch_execute(batch)
     run.stop_timer()
