@@ -38,7 +38,7 @@ def _benchmark_db_get_simple(run, namespace, use_index_all, use_index_single):
     assert run != None
     _benchmark_db_insert(None, b_scheme, "\0", True, False, False, False)
     run.start_timer()
-    iterations = N if use_index_all or use_index_single else (N / N_GET_DIVIDER)
+    iterations = N if use_index_all or use_index_single else int(N / N_GET_DIVIDER)
     for i in range(iterations):
         field_type_ptr = ffi.new("JDBType*")
         field_value_ptr = ffi.new("void**")
