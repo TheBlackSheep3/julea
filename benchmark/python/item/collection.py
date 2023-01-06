@@ -2,7 +2,6 @@ from benchmarkrun import BenchmarkRun, append_to_benchmark_list_and_run
 from julea import lib, encode, ffi
 
 def benchmark_collection(benchmarkrun_list, iterations):
-    print("benchmark_collection called")
     append_to_benchmark_list_and_run(benchmarkrun_list, BenchmarkRun("/item/collection/create", iterations), benchmark_collection_create)
     append_to_benchmark_list_and_run(benchmarkrun_list, BenchmarkRun("/item/collection/create-batch", iterations), benchmark_collection_create_batch)
     append_to_benchmark_list_and_run(benchmarkrun_list, BenchmarkRun("/item/collection/delete", iterations), benchmark_collection_delete)
