@@ -6,10 +6,12 @@ from db.iterator import benchmark_db_iterator
 from db.schema import benchmark_db_schema
 from item.collection import benchmark_collection
 from item.item import benchmark_item
+from benchmarkrun import print_result_table_header
 
 if __name__ == "__main__":
     runs = []
     iterations = 1000
+    print_result_table_header()
 
     # KV Client
     benchmark_kv(runs, iterations)
@@ -26,5 +28,3 @@ if __name__ == "__main__":
     # Item Client
     benchmark_collection(runs, iterations)
     benchmark_item(runs, iterations)
-    for run in runs:
-        print(f"run {run.name} took {run.get_runtime_s()} s with {run.get_runtime_ms()/run.operations} ms per operation")
