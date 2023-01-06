@@ -79,6 +79,8 @@ def benchmark_object_status_batch(run):
     _benchmark_object_status(run, True)
 
 def _benchmark_object_status(run, use_batch):
+    run.iterations = 10000 if use_batch else 1000;
+    run.operations = run.iterations
     batch = lib.j_batch_new_for_template(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
     name = encode("benchmark")
     obj = lib.j_object_new(name, name)
@@ -108,6 +110,8 @@ def benchmark_object_read_batch(run):
     _benchmark_object_read(run, True, 4 * 1024)
 
 def _benchmark_object_read(run, use_batch, block_size):
+    run.iterations = 10000 if use_batch else 1000;
+    run.operations = run.iterations
     dummy = ffi.new("char[]", block_size)
     nb_ptr = ffi.new("unsigned long*")
     batch = lib.j_batch_new_for_template(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
@@ -141,6 +145,8 @@ def benchmark_object_write_batch(run):
     _benchmark_object_write(run, True, 4 * 1024)
 
 def _benchmark_object_write(run, use_batch, block_size):
+    run.iterations = 10000 if use_batch else 1000;
+    run.operations = run.iterations
     dummy = ffi.new("char[]", block_size)
     nb_ptr = ffi.new("unsigned long*")
     batch = lib.j_batch_new_for_template(lib.J_SEMANTICS_TEMPLATE_DEFAULT)

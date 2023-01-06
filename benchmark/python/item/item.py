@@ -107,6 +107,8 @@ def benchmark_item_get_status_batch(run):
     _benchmark_item_get_status(run, True)
 
 def _benchmark_item_get_status(run, use_batch):
+    run.iterations = 10000 if use_batch else 1000;
+    run.operations = run.iterations
     dummy = ffi.new("char[1]")
     nb_ptr = ffi.new("unsigned long*")
     batch = lib.j_batch_new_for_template(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
@@ -137,6 +139,8 @@ def benchmark_item_read_batch(run):
     _benchmark_item_read(run, True, 4 * 1024)
 
 def _benchmark_item_read(run, use_batch, block_size):
+    run.iterations = 10000 if use_batch else 1000;
+    run.operations = run.iterations
     nb_ptr = ffi.new("unsigned long*")
     dummy = ffi.new("char[]", block_size)
     batch = lib.j_batch_new_for_template(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
@@ -171,6 +175,8 @@ def benchmark_item_write_batch(run):
     _benchmark_item_write(run, True, 4 * 1024)
 
 def _benchmark_item_write(run, use_batch, block_size):
+    run.iterations = 10000 if use_batch else 1000;
+    run.operations = run.iterations
     dummy = ffi.new("char[]", block_size)
     nb_ptr = ffi.new("unsigned long*")
     batch = lib.j_batch_new_for_template(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
