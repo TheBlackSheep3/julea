@@ -14,7 +14,7 @@ def benchmark_db_schema_create_batch(run):
     _benchmark_db_schema_create(run, True)
 
 def _benchmark_db_schema_create(run, use_batch):
-    run.iterations = 100
+    run.iterations = int(run.iterations / 10)
     run.operations = run.iterations
     batch = lib.j_batch_new_for_template(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
     delete_batch = lib.j_batch_new_for_template(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
@@ -49,7 +49,7 @@ def benchmark_db_schema_delete_batch(run):
     _benchmark_db_schema_delete(run, True)
 
 def _benchmark_db_schema_delete(run, use_batch):
-    run.iterations = 100
+    run.iterations = int(run.iterations / 10)
     run.operations = run.iterations
     batch = lib.j_batch_new_for_template(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
     for i in range(run.iterations):
