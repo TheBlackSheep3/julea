@@ -44,6 +44,10 @@ def benchmark_kv_get(run):
 def benchmark_kv_get_batch(run):
     _benchmark_kv_get(run, True)
 
+@ffi.def_extern()
+def cffi_j_kv_get_function(pointer1, integer, pointer2):
+    return
+
 def _benchmark_kv_get(run, use_batch):
     batch = lib.j_batch_new_for_template(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
     deletebatch = lib.j_batch_new_for_template(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
@@ -60,7 +64,7 @@ def _benchmark_kv_get(run, use_batch):
         name = encode(f"benchmark-{i}")
         namespace = encode("benchmark")
         kv = lib.j_kv_new(namespace, name)
-        lib.j_kv_get_callback(kv, ffi.NULL, ffi.NULL, batch)
+        lib.j_kv_get_callback(kv, lib.cffi_j_kv_get_function, ffi.NULL, batch)
         if not use_batch:
             assert lib.j_batch_execute(batch)
         lib.j_kv_unref(kv)
