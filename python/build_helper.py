@@ -47,8 +47,9 @@ typedef struct _bson_t
     uint8_t     padding[120];
 } bson_t;
 
-typedef ... JKVGetFunc;
+typedef ... JBatch;
 extern "Python" void cffi_j_kv_get_function(gpointer, guint32, gpointer);
+extern "Python" void cffi_j_batch_async_callback(JBatch*, gboolean, gpointer);
 
 """
     for library in libraries:
