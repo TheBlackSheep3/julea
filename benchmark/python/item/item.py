@@ -65,11 +65,11 @@ def _benchmark_item_delete(run, use_batch):
     run.start_timer()
     for i in range(run.iterations):
         ptr = ffi.new("int**")
-        item = ffi.cast("JItem**", ptr)
+        item_ptr = ffi.cast("JItem**", ptr)
         name = encode(f"benchmark-{i}")
-        lib.j_item_get(collection, item, name, get_batch)
+        lib.j_item_get(collection, item_ptr, name, get_batch)
         assert lib.j_batch_execute(get_batch)
-        lib.j_item_delete(batch)
+        lib.j_item_delete(item_ptr[0], batch)
         if not use_batch:
             assert lib.j_batch_execute(batch)
     if use_batch:
