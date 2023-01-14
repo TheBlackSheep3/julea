@@ -58,7 +58,7 @@ extern "Python" void cffi_j_batch_async_callback(JBatch*, gboolean, gpointer);
         file.write(content)
 
 def get_additional_compiler_flags(libraries, remove_sanitize=True):
-    flags_buffer = popen("pkg-config --cflags {libs}".format(libs=' '.join(libraries)))
+    flags_buffer = popen(f"pkg-config --cflags {' '.join(libraries)}")
     flags = flags_buffer.read().strip().split(' ')
     # remove duplicate parameters
     flags = [*set(flags)]
@@ -95,9 +95,9 @@ def collect_julea(filename, libraries, debug = False):
             "-D'G_GNUC_PRINTF(x, y)='"
             ]
     # let preprocessor collect all declarations
-    system("gcc -E -P {macros} {file} -I. {include_flags} -o {output}".format(file=temp_filename, include_flags=' '.join(flags), output=filename, macros=' '.join(macros)))
+    system(f"gcc -E -P {' '.join(macros)} {temp_filename} -I. {' '.join(flags)} -o {filename}")
     # remove temporary files needed to please the preprocessor
-    system("rm -rf glib.h gmodule.h bson.h gio {file}".format(file=temp_filename))
+    system(f"rm -rf glib.h gmodule.h bson.h gio {temp_filename}")
 
 def process(libs, tempheader, debug=False):
     ffi = cffi.FFI()
@@ -107,7 +107,7 @@ def process(libs, tempheader, debug=False):
     includes = get_additional_compiler_flags(libs+["glib-2.0"], remove_sanitize=True)
     include_dirs = get_include_dirs(includes)
     ffi.cdef(header_content, override=True)
-    outdir = "{currentdir}/../bld/".format(currentdir=dirname(__file__))
+    outdir = f"{dirname(__file__)}/../bld/"
     headerincludes = ""
     for lib in libs:
         headerincludes += f'#include "{lib}.h"\n'
@@ -122,10 +122,10 @@ def process(libs, tempheader, debug=False):
             )
     ffi.compile(tmpdir=outdir, verbose=debug)
     if not debug:
-        system("rm -f {file} {name}.o {name}.c".format(file=tempheader, name=outdir+libraryname))
+        system(f"rm -f {tempheader} {outdir+libraryname}.o {outdir+libraryname}.c")
 
 def copy_main_module():
-    system("cp {currentdir}/{file} {currentdir}/../bld/{file}".format(currentdir=dirname(__file__), file="julea.py"))
+    system(f"cp {dirname(__file__)}/julea.py {dirname(__file__)}/../bld/julea.py")
 
 def build(include_libs, debug=False):
     header_name = "header_julea.h"
