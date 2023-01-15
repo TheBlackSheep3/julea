@@ -8,7 +8,6 @@ class BenchmarkRun:
         self.start = None
         self.stop = None
         self.operations = iterations
-        self.bytes = None
         self.machine_readable = machine_readable
 
     def start_timer(self):
@@ -36,7 +35,7 @@ class BenchmarkRun:
 
     def print_result(self):
         if self.machine_readable:
-            print(f"{self.name},{self.get_runtime_s()},{self.operations},{'-' if self.bytes == None else self.bytes}")
+            print(f"{self.name},{self.get_runtime_s()},{self.operations}")
         else:
             name_col = self.name.ljust(60," ")
             runtime_col = f"{self.get_runtime_s():.3f}".rjust(8," ") + " seconds"
@@ -45,7 +44,7 @@ class BenchmarkRun:
 
     def print_empty(self):
         if self.machine_readable:
-            print(f"{self.name},-,-,-")
+            print(f"{self.name},-,-")
         else:
             name_col = self.name.ljust(60," ")
             runtime_col = "-".rjust(8," ") + " seconds"
@@ -67,7 +66,7 @@ def print_result_table_header():
     print(header+"\n"+len(header)*"-")
 
 def print_machine_readable_header():
-    print("name,elapsed,operations,bytes")
+    print("name,elapsed,operations")
 
 def print_header(machine_readable):
     if machine_readable:
