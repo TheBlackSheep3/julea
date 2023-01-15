@@ -100,9 +100,9 @@ def _benchmark_db_get_range(run, namespace, use_index_all, use_index_single):
         sint_name = encode("sint")
         string_name = encode("string")
         range_begin_ptr = ffi.new("long*")
-        range_begin_ptr[0] = (i * (CLASS_MODULUS / N_GET_DIVIDER)) - CLASS_LIMIT
+        range_begin_ptr[0] = int((i * (CLASS_MODULUS / N_GET_DIVIDER)) - CLASS_LIMIT)
         range_end_ptr = ffi.new("long*")
-        range_end_ptr[0] = ((i + 1) * (CLASS_MODULUS / N_GET_DIVIDER)) - (CLASS_LIMIT + 1)
+        range_end_ptr[0] = int(((i + 1) * (CLASS_MODULUS / N_GET_DIVIDER)) - (CLASS_LIMIT + 1))
         selector = lib.j_db_selector_new(b_scheme, lib.J_DB_SELECTOR_MODE_AND,
                                          b_s_error_ptr)
         assert lib.j_db_selector_add_field(selector, sint_name,

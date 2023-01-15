@@ -172,13 +172,13 @@ def _benchmark_db_update(run, namespace, use_batch, use_index_all,
     run.start_timer()
     iterations = N if use_index_all or use_index_single else int(N / N_GET_DIVIDER)
     for i in range(iterations):
-        sint_name = "sint"
+        sint_name = encode("sint")
         i_signed_ptr = ffi.new("long*")
         i_signed_ptr[0] = (((i + N_PRIME) * SIGNED_FACTOR) & CLASS_MODULUS) - CLASS_LIMIT
         selector = lib.j_db_selector_new(b_scheme, lib.J_DB_SELECTOR_MODE_AND,
                                          b_s_error_ptr)
         entry = lib.j_db_entry_new(b_scheme, b_s_error_ptr)
-        string_name = "string"
+        string_name = encode("string")
         string = encode(_benchmark_db_get_identifier(i))
         assert b_s_error_ptr == ffi.NULL
         assert lib.j_db_entry_set_field(encode, sint_name, i_signed_ptr, 0,

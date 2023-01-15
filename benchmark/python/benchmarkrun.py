@@ -18,7 +18,7 @@ class BenchmarkRun:
     def stop_timer(self):
         self.timer_started = False
         self.stop = perf_counter_ns()
-        self.print_result(self.machine_readable)
+        self.print_result()
 
     def get_runtime_ms(self):
         val = self.get_runtime_ns()
@@ -34,8 +34,8 @@ class BenchmarkRun:
         else:
             return self.stop - self.start
 
-    def print_result(self, machine_readable):
-        if machine_readable:
+    def print_result(self):
+        if self.machine_readable:
             print(f"{self.name},{self.get_runtime_s()},{self.operations},{'-' if self.bytes == None else self.bytes}")
         else:
             name_col = self.name.ljust(60," ")
@@ -43,10 +43,21 @@ class BenchmarkRun:
             operations_col = f"{int(self.operations/self.get_runtime_s())}/s".rjust(12," ")
             print(f"{name_col} | {runtime_col} | {operations_col}")
 
+    def print_empty(self):
+        if self.machine_readable:
+            print(f"{self.name},-,-,-")
+        else:
+            name_col = self.name.ljust(60," ")
+            runtime_col = "-".rjust(8," ") + " seconds"
+            operations_col = "-/s".rjust(12," ")
+            print(f"{name_col} | {runtime_col} | {operations_col}")
 
 def append_to_benchmark_list_and_run(_list, run, func):
     _list.append(run)
-    func(run)
+    try:
+        func(run)
+    except:
+        run.print_empty()
 
 def print_result_table_header():
     name_col = "Name".ljust(60," ")
