@@ -31,7 +31,8 @@ class JBatchResult:
 
 class JBatch:
     def __init__(self, result):
-        self.batch = lib.j_batch_new_for_template(lib.J_SEMANTICS_TEMPLATE_DEFAULT)
+        template = lib.J_SEMANTICS_TEMPLATE_DEFAULT
+        self.batch = lib.j_batch_new_for_template(template)
         self.result = result
 
     def __enter__(self):
