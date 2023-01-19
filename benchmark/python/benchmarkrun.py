@@ -17,7 +17,6 @@ class BenchmarkRun:
     def stop_timer(self):
         self.timer_started = False
         self.stop = perf_counter_ns()
-        self.print_result()
 
     def get_runtime_ms(self):
         val = self.get_runtime_ns()
@@ -55,6 +54,7 @@ def append_to_benchmark_list_and_run(_list, run, func):
     _list.append(run)
     try:
         func(run)
+        run.print_result()
     except:
         run.print_empty()
 
